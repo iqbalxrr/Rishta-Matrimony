@@ -53,37 +53,37 @@ const NextArrow = ({ onClick }) => (
 );
 
 const TrustedSection = () => {
-const settings = {
-  dots: false,
-  infinite: true,
-  speed: 500,
-  slidesToShow: 3,
-  slidesToScroll: 1,
-  arrows: true,
-  autoplay: true,          // Enable autoplay
-  autoplaySpeed: 3000,     // Time between slides in ms (3000 = 3 seconds)
-  nextArrow: <NextArrow />,
-  prevArrow: <PrevArrow />,
-  responsive: [
-    {
-      breakpoint: 1024,
-      settings: {
-        slidesToShow: 2,
-        slidesToScroll: 1,
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    arrows: true,
+    autoplay: true,         
+    autoplaySpeed: 3000,     
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
       },
-    },
-    {
-      breakpoint: 640,
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
+      {
+        breakpoint: 640,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
       },
-    },
-  ],
-};
+    ],
+  };
 
   return (
-    <section className="py-16 ">
+    <section className="py-16 mt-12">
       <div className="text-center mb-10 px-4 sm:px-6 lg:px-8">
         <h4 className="text-lg text-[#b98c5e] tracking-widest subtitle-font font-semibold">TRUSTED BRAND</h4>
         <h2 className="text-3xl sm:text-4xl font-bold subtitle-font  text-[#4e2f1f] mt-2">

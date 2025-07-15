@@ -12,7 +12,7 @@ const WelcomeSection = () => {
   });
 
   return (
-    <div className="px-5">
+    <div className="px-5 py-16">
       {/* Top Section */}
       <div className="max-w-screen-xl mx-auto lg:px-4 flex flex-col md:flex-row gap-10">
         {/* Image */}
@@ -31,7 +31,7 @@ const WelcomeSection = () => {
 
         {/* Text */}
         <div className="w-full lg:w-1/2 text-start md:text-left">
-          <h2 className="text-4xl font-bold text-[#663300] mb-2 subtitle-font">WELCOME TO</h2>
+          <h2 className="text-4xl font-bold text-[#66451C] mb-2 subtitle-font">WELCOME TO</h2>
           <h3 className="text-3xl text-rose-600 font-semibold mb-4 subtitle-font">
             WEDDING MATRIMONY
           </h3>

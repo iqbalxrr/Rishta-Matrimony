@@ -6,6 +6,8 @@ import OurServices from '../Components/OurSevices';
 import HowItWorks from '../Components/HowItWorks';
 import WelcomeSection from '../Components/WelcomeSection';
 import TrustedSection from '../Components/TrustedSection';
+import SuccessStory from '../Components/SuccessStory';
+
 
 const HomePage = () => {
     return (
@@ -16,6 +18,7 @@ const HomePage = () => {
             <HowItWorks></HowItWorks>
             <WelcomeSection></WelcomeSection>
             <TrustedSection></TrustedSection>
+            <SuccessStory></SuccessStory>
         </div>
     );
 };
