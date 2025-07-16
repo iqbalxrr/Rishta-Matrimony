@@ -1,13 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { Link } from 'react-router';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFileUpload, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { GoogleAuthProvider } from 'firebase/auth';
+import { AuthContext } from '../Contex/AuthProvider';
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router';
 
-const imgbbAPIKey = '7db0214d63f2739a9721e7a5fe4ffd7a';
+const imgbbAPIKey = import.meta.env.VITE_IMGBB_API_KEY;
+const provider = new GoogleAuthProvider();
 
 const RegisterPage = () => {
+
+  const navigate = useNavigate();
+
+  const { CreateUser, SigninWithGoogle, setUser, UpdateUserProfile } =
+    useContext(AuthContext);
+
+
+  const [imagePreview, setImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -15,10 +32,6 @@ const RegisterPage = () => {
     reset,
     watch,
   } = useForm();
-  const [imagePreview, setImagePreview] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [submitError, setSubmitError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
 
   const photoFileList = watch('photo');
 
@@ -55,12 +68,39 @@ const RegisterPage = () => {
 
       const photoURL = response.data.data.url;
 
-      console.log('Registering:', {
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        photoURL,
+      const {name , email , password } = data;
+
+      console.log(name,email,password)
+
+      // Create user section >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+       CreateUser(email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user)
+
+        return UpdateUserProfile({
+          displayName: name,
+          photoURL,
+        });
+      })
+      .then(() => {
+        Swal.fire({
+          title: "Signup Sucessfully!",
+          icon: "success",
+          draggable: true,
+        });
+
+        navigate("/");
+      })
+      .catch((error) => {
+        Swal.fire({
+          title: `${error.message}`,
+          icon: "error",
+          draggable: true,
+        });
       });
+  
 
       reset();
       setImagePreview(null);
@@ -71,9 +111,27 @@ const RegisterPage = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    console.log('Google Sign-Up');
-  };
+  // create user by Google >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+  function handleGoogleLogin() {
+    
+    SigninWithGoogle(provider)
+      .then((result) => {
+        setUser(result.user);
+        console.log(result.user);
+        Swal.fire({
+          title: "Signup Sucessfully!",
+          icon: "success",
+          draggable: true,
+        });
+
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+
+  }
 
   return (
     <div className="min-h-screen pt-40 flex items-center justify-center px-4 py-10 sm:px-6 lg:px-8 ">
@@ -144,10 +202,10 @@ const RegisterPage = () => {
             className={`cursor-pointer overflow-hidden flex items-center justify-center border border-gray-300 rounded p-3 text-gray-700 hover:border-rose-500
               ${errors.photo ? 'border-red-500 text-red-500' : ''}`}
           >
-            <FaFileUpload className="mr-2" size={20}  />
+            <FaFileUpload className="mr-2" size={20} />
             {photoFileList && photoFileList.length > 0
               ? `Uploaded: ${photoFileList[0].name}`
-              :  ` Choose Profile Photo`}
+              : ` Choose Profile Photo`}
           </label>
           <input
             id="photo-upload"

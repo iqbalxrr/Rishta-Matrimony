@@ -1,10 +1,28 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { FcGoogle } from 'react-icons/fc';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { GoogleAuthProvider } from 'firebase/auth';
+import { useContext } from 'react';
+import { AuthContext } from '../Contex/AuthProvider';
+import Swal from 'sweetalert2';
+
+
+const provider = new GoogleAuthProvider();
 
 const LoginPage = () => {
+
+  const navigate = useNavigate();
+
+   const {
+    SigninWithGoogle,
+    setUser,
+    LoginUser,
+
+  } = useContext(AuthContext);
+
+
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
@@ -14,8 +32,27 @@ const LoginPage = () => {
     setLoading(true);
     setLoginError('');
 
+    const {email , password} = data;
+
     try {
-      // Handle login logic here
+      LoginUser(email, password)
+      .then((result) => {
+        setUser(result.user);
+        Swal.fire({
+          title: "Login Sucessfully!",
+          icon: "success",
+          draggable: true,
+        });
+        navigate(location.state? location.state : "/" );
+      })
+      .catch((error) => {
+        // setErrorMessage(error.message);
+        Swal.fire({
+          title: `${error.message}`,
+          icon: "error",
+          draggable: true,
+        });
+      });
       console.log('Logging in:', data);
     } catch (error) {
       setLoginError('Login failed. Please check your credentials.');
@@ -26,7 +63,21 @@ const LoginPage = () => {
   };
 
   const handleGoogleLogin = () => {
-    console.log('Google Login');
+   SigninWithGoogle(provider)
+         .then((result) => {
+           setUser(result.user);
+           console.log(result.user);
+           Swal.fire({
+             title: "Login Sucessfully!",
+             icon: "success",
+             draggable: true,
+           });
+   
+           navigate("/");
+         })
+         .catch((error) => {
+           console.log(error.message);
+         });
   };
 
   return (

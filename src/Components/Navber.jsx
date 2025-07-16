@@ -1,24 +1,45 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { Link, NavLink } from "react-router";
+import { AuthContext } from "../Contex/AuthProvider";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDrawer = () => setIsOpen(!isOpen);
 
+  const { user } = useContext(AuthContext)
+
+  const handleLinkClick = () => {
+    if (isOpen) {
+      toggleDrawer();
+    }
+  };
+
+
+  console.log(user)
+
   const navLinks = (
     <>
-      <NavLink to="/" className="block  py-2 hover:text-blue-500">Home</NavLink>
-      <NavLink to="/about" className="block  py-2 hover:text-blue-500">About</NavLink>
-      <NavLink to="/biodataspage" className="block  py-2 hover:text-blue-500">Biodatas</NavLink>
-      <NavLink to="/contact" className="block py-2 hover:text-blue-500">Contact</NavLink>
+      <NavLink to="/" onClick={handleLinkClick} className="block  py-2 hover:text-blue-500">Home</NavLink>
+      <NavLink to="/about" onClick={handleLinkClick} className="block  py-2 hover:text-blue-500">About</NavLink>
+      <NavLink to="/biodataspage" onClick={handleLinkClick} className="block  py-2 hover:text-blue-500">Biodatas</NavLink>
+      <NavLink to="/contact" onClick={handleLinkClick} className="block py-2 hover:text-blue-500">Contact</NavLink>
 
+      {
+         user&&   <NavLink to="/dashboard" onClick={handleLinkClick} className="block py-2 hover:text-blue-500">Dashboard</NavLink>
+      }
 
-      <button className="  bg-rose-600  hover:bg-rose-700 text-white px-4 rounded-3xl "  >
-        <Link to="/loginpage" className="block py-2 ">Log in</Link>
-      </button>
-
+      {user ? (
+        <img src={user?.photoURL} alt="" className={`w-10   rounded-full ${isOpen ? 'hidden' : 'flex'}`} />
+      ) : (
+        <Link
+          to="/loginpage"
+          className="bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-3xl mt-2 md:mt-0 text-center"
+        >
+          Log In
+        </Link>
+      )}
 
     </>
   );
@@ -26,7 +47,7 @@ const Navbar = () => {
   return (
     <>
       {/* Navbar */}
-      <nav className="bg-rose-100 shadow-md fixed  w-full z-50">
+      <nav className="bg-[#FEFBF1] shadow-md fixed  w-full z-50">
         <div className="max-w-screen-xl mx-auto px-4 py-2 flex justify-between items-center poppins ">
           {/* Logo */}
           <a href="/" className="flex items-center space-x-2">
@@ -35,7 +56,7 @@ const Navbar = () => {
           </a>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex space-x-6 text-gray-900 subtitle-font  font-bold">
+          <div className="hidden md:flex space-x-6 md:text-sm lg:text-base items-center text-gray-900 subtitle-font  font-bold">
             {navLinks}
           </div>
 
@@ -54,24 +75,42 @@ const Navbar = () => {
       {/* Mobile Drawer */}
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black bg-opacity-40 z-40 transition-opacity duration-300 ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"
+        className={`fixed inset-0 bg-black/30  z-40 transition-opacity duration-300 ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"
           }`}
         onClick={toggleDrawer}
       ></div>
 
       {/* Drawer panel */}
       <div
-        className={`fixed top-0 right-0 w-64 h-full bg-white  z-50 shadow-lg transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed  top-0 right-0 w-64 h-full bg-[#FEFBF1] z-50 shadow-lg transform transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"
           }`}
       >
-        <div className="p-4 flex justify-between items-center border-b border-gray-200 ">
-          <span className="text-lg font-semibold ">Menu</span>
+        <div className="py-6 px-4 flex justify-between items-center border-b border-gray-200 ">
+          <span className="text-lg font-semibold ">
+            {
+              user ?
+
+                <div className="flex gap-2">
+                  <img src={user?.photoURL} alt="" className="w-10 rounded-full border-2 border-[#66451C]" />
+                  <div className="flex flex-col gap-1 primary-color">
+                    <h1 className="text-[12px] overflow-hidden">{user?.displayName}</h1>
+                    <h1 className="text-[12px] overflow-hidden">{user?.email}</h1>
+                  </div>
+                </div>
+
+                :
+
+                <h1 className="subtitle-font">Menu</h1>
+            }
+          </span>
           <button onClick={toggleDrawer} className="text-gray-700  text-xl">
-            <FaTimes />
+            <FaTimes color="#EC003F" />
           </button>
         </div>
-        <div className="flex flex-col p-4 text-gray-700  font-medium">
+        <div className="flex flex-col p-4 text-gray-700 subtitle-font font-bold ">
+
           {navLinks}
+
         </div>
       </div>
     </>

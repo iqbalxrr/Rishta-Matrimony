@@ -8,31 +8,15 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import React, {  createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import auth from "../Firebase/firebase.config";
 import { toast, Bounce } from "react-toastify";
-import axios from "axios";
 
-export const AuthContext = createContext();
+export const AuthContext = createContext({})
+
 
 const AuthProvider = ({ children }) => {
    
-  const [theme, setTheme] = useState('light')
-
-   useEffect(() => {
-      const savedTheme = localStorage.getItem("theme") || "light";
-      setTheme(savedTheme);
-      document.documentElement.setAttribute("data-theme", savedTheme);
-    }, []);
-  
-    const toggleTheme = () => {
-      const newTheme = theme === "light" ? "dark" : "light";
-      setTheme(newTheme);
-      document.documentElement.setAttribute("data-theme", newTheme);
-      localStorage.setItem("theme", newTheme);
-    };
-
-
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -105,16 +89,7 @@ const AuthProvider = ({ children }) => {
       // console.log(currentUser);
       setUser(currentUser);
       setLoading(false);
-      if(currentUser?.email){
-        
-            axios.post("https://assigenment-a11-server.vercel.app/jwt", { email: currentUser?.email }, { withCredentials: true })
-            .then(( res) => {
-              console.log("token after genarating" ,res.data);
-            })
-            .catch( err => {
-              console.log(err)
-            })
-      }
+     
     });
 
     return () => unsubscribe();
@@ -133,9 +108,7 @@ const AuthProvider = ({ children }) => {
     loading,
     setLoading,
     PasswordReset,
-    theme,
-    setTheme,
-    toggleTheme,
+    
 
   };
 
