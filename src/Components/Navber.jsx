@@ -27,7 +27,7 @@ const Navbar = () => {
       <NavLink to="/contact" onClick={handleLinkClick} className="block py-2 hover:text-blue-500">Contact</NavLink>
 
       {
-         user&&   <NavLink to="/dashboard" onClick={handleLinkClick} className="block py-2 hover:text-blue-500">Dashboard</NavLink>
+         user&&   <NavLink to="/userDashboard" onClick={handleLinkClick} className="block py-2 hover:text-blue-500">Dashboard</NavLink>
       }
 
       {user ? (
