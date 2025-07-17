@@ -1,4 +1,3 @@
-
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -12,15 +11,51 @@ import React, { createContext, useEffect, useState } from "react";
 import auth from "../Firebase/firebase.config";
 import { toast, Bounce } from "react-toastify";
 
-export const AuthContext = createContext({})
+// Create context
+export const AuthContext = createContext({});
 
+const imgbbApiKey =  import.meta.env.VITE_IMGBB_API_KEY;
 
 const AuthProvider = ({ children }) => {
-   
-
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 🖼️ Image Upload State
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
+
+  // 🔄 Upload Image Function
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append("image", file);
+    setUploading(true);
+
+    try {
+      const res = await fetch(`https://api.imgbb.com/1/upload?key=${imgbbApiKey}`, {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        const url = data.data.display_url;
+        setUploadedImageUrl(url);
+        SuccessTost("Image uploaded successfully!");
+        return url;
+      } else {
+        ErrorTost("Image upload failed");
+        return "";
+      }
+    } catch (error) {
+      console.error("Image upload error:", error);
+      ErrorTost("Upload error");
+      return "";
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // ✅ Toast
   const SuccessTost = (message) => {
     return toast.success(message, {
       position: "top-right",
@@ -31,7 +66,6 @@ const AuthProvider = ({ children }) => {
       draggable: true,
       progress: undefined,
       theme: "colored",
-      
       transition: Bounce,
     });
   };
@@ -46,11 +80,11 @@ const AuthProvider = ({ children }) => {
       draggable: true,
       progress: undefined,
       theme: "colored",
-      
       transition: Bounce,
     });
   };
 
+  // ✅ Firebase Auth Methods
   const CreateUser = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
@@ -80,21 +114,16 @@ const AuthProvider = ({ children }) => {
     return sendPasswordResetEmail(auth, email);
   };
 
-
-  
-
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      // console.log(currentUser);
       setUser(currentUser);
       setLoading(false);
-     
     });
 
     return () => unsubscribe();
   }, []);
 
+  // ✅ All values provided to children
   const info = {
     user,
     setUser,
@@ -108,11 +137,12 @@ const AuthProvider = ({ children }) => {
     loading,
     setLoading,
     PasswordReset,
-    
 
+    // 🖼️ Image upload values
+    uploadedImageUrl,
+    uploadImage,
+    uploading,
   };
-
-  // console.log(user);
 
   return <AuthContext.Provider value={info}>{children}</AuthContext.Provider>;
 };

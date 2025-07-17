@@ -28,7 +28,7 @@ const AdminDashboardLayout = () => {
     "text-blue-700 hover:bg-blue-200 rounded-md px-3 py-2 flex items-center gap-2";
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row relative">
+    <div className="min-h-screen max-w-8/12 mx-auto flex flex-col md:flex-row relative">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex md:flex-col md:w-64 bg-blue-100 p-6 shadow-md">
         <h2 className="text-2xl font-bold mb-8 text-blue-600 text-center">
