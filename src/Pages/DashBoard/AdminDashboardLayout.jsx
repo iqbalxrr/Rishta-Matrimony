@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { NavLink, Outlet } from "react-router";
 import {
   FaBars,
@@ -8,9 +8,13 @@ import {
   FaCheckCircle,
   FaChartPie,
   FaDoorOpen,
+  FaChevronRight,
+  FaHeart,
 } from "react-icons/fa";
+import { AuthContext } from "../../Contex/AuthProvider";
 
 const AdminDashboardLayout = () => {
+  const {user} = useContext(AuthContext)
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
@@ -20,6 +24,7 @@ const AdminDashboardLayout = () => {
     { to: "/adminDashboard/manage", label: "Manage Users", icon: <FaUsers /> },
     { to: "/adminDashboard/approvedPremium", label: "Approve Premium", icon: <FaUserShield /> },
     { to: "/adminDashboard/approvedContactRequest", label: "Approve Contacts", icon: <FaCheckCircle /> },
+    { to: "/adminDashboard/successStories", label: "SuccessStories", icon: <FaHeart/> },
   ];
 
   const activeClass =
@@ -28,10 +33,11 @@ const AdminDashboardLayout = () => {
     "text-blue-700 hover:bg-blue-200 rounded-md px-3 py-2 flex items-center gap-2";
 
   return (
-    <div className="min-h-screen max-w-8/12 mx-auto flex flex-col md:flex-row relative">
+  <div className="">
+      <div className="min-h-screen flex flex-col md:flex-row relative">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex md:flex-col md:w-64 bg-blue-100 p-6 shadow-md">
-        <h2 className="text-2xl font-bold mb-8 text-blue-600 text-center">
+      <aside className="hidden md:flex md:flex-col w-64 bg-blue-100 p-6 shadow-md">
+        <h2 className="text-2xl font-bold mb-8  text-blue-600 text-center">
           Admin Dashboard
         </h2>
         <nav className="flex flex-col space-y-4 font-semibold">
@@ -60,7 +66,7 @@ const AdminDashboardLayout = () => {
 
       {/* Mobile Navbar */}
       <div className="flex md:hidden items-center justify-between bg-blue-100 p-4 shadow-md">
-        <h2 className="text-xl font-bold text-blue-600">Admin Dashboard</h2>
+        <h2 className="text-xl font-bold subtitle-font text-blue-600">Dashboard</h2>
         <button
           onClick={toggleDrawer}
           className="text-2xl text-blue-700"
@@ -111,9 +117,20 @@ const AdminDashboardLayout = () => {
 
       {/* Main Content */}
       <main className="flex-1 p-6 bg-white">
+        <div className="hidden md:flex justify-between border-b-2 pb-4 border-gray-200">
+                    <div className="flex md:gap-3 lg:gap-10 *:hover:text-pink-700">
+                      <NavLink to="/" className="">Home </NavLink>
+                      <FaChevronRight className="mt-2" />
+                      <NavLink to="/about">About</NavLink>
+                      <FaChevronRight className="mt-2" />
+                      <NavLink to="/contac">Contact</NavLink>
+                    </div>
+                    <img src={user?.photoURL} alt="" className="w-10 rounded-full" />
+                  </div>
         <Outlet />
       </main>
     </div>
+  </div>
   );
 };
 

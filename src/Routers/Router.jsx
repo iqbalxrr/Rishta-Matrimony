@@ -26,6 +26,7 @@ import ApprovedContactRequest from "../Pages/DashBoard/Admin/ApprovedContactRequ
 // Route Guards (Assuming you'll implement them)
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
+import SuccessStories from "../Pages/DashBoard/Admin/SuccessStories";
 
 
 
@@ -60,17 +61,20 @@ export const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <UserDashboardLayout />
+       
       </PrivateRoute>
     ),
     children: [
+      { 
+        path: "/userDashboard",
+        index:true,
+        element: <ViewBiodata />,
+      },
       {
         path: "editbio",
         element: <EditBiodata />,
       },
-      {
-        path: "view",
-        element: <ViewBiodata />,
-      },
+    
       {
         path: "myContactRequest",
         element: <MyContactRequest />,
@@ -90,15 +94,11 @@ export const router = createBrowserRouter([
   {
     path: "/adminDashboard",
     element: (
-      <AdminRoute>
+      
         <AdminDashboardLayout />
-      </AdminRoute>
-
-
     ),
     children: [
       {
-        path: "dashboard",
         index: true,
         element: <AdminDashboardHome />,
       },
@@ -113,6 +113,10 @@ export const router = createBrowserRouter([
       {
         path: "approvedContactRequest",
         element: <ApprovedContactRequest />,
+      },
+      {
+        path: "successStories",
+        element: <SuccessStories/>,
       },
     ],
   },

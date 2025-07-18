@@ -29,6 +29,9 @@ const Navbar = () => {
       {
          user&&   <NavLink to="/userDashboard" onClick={handleLinkClick} className="block py-2 hover:text-blue-500">Dashboard</NavLink>
       }
+      {
+         user&&   <NavLink to="/adminDashboard" onClick={handleLinkClick} className="block py-2 hover:text-blue-500">Admin Dashboard</NavLink>
+      }
 
       {user ? (
         <img src={user?.photoURL} alt="" className={`w-10   rounded-full ${isOpen ? 'hidden' : 'flex'}`} />

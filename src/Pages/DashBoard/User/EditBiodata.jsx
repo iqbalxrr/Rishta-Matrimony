@@ -35,7 +35,7 @@ const EditBiodata = () => {
     };
 
     return (
-        <div className=" px-2 sm:px-4 ">
+        <div className=" px-2 sm:px-4 py-10 ">
             <div className="p-4 sm:p-6 ">
                 <h2 className="text-2xl font-semibold subtitle-font  mb-10">Edit Biodata</h2>
 

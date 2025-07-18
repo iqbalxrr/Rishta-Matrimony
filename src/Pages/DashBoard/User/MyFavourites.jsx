@@ -25,8 +25,8 @@ const MyFavouritesBiodata = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 md:px-6 py-10">
-      <h2 className="text-3xl font-bold text-center mb-6">My Favourite Biodatas</h2>
+    <div className=" px-4 md:px-6 py-10">
+      <h2 className="text-2xl font-bold text-center subtitle-font mb-6">My Favourite Biodatas</h2>
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200 shadow-md rounded-lg overflow-hidden">
@@ -59,7 +59,7 @@ const MyFavouritesBiodata = () => {
                   <td className="px-4 py-3 text-center border-b">
                     <button
                       onClick={() => handleDelete(bio.id)}
-                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-md text-xs transition"
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-xs transition"
                     >
                       Delete
                     </button>

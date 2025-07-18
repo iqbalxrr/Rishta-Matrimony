@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { Dialog } from '@headlessui/react';
 import { toast } from 'react-toastify';
+import { useContext } from 'react';
+import { AuthContext } from '../../../Contex/AuthProvider';
+
 
 const ViewBiodata = () => {
+  const{user} = useContext(AuthContext)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
@@ -10,7 +14,7 @@ const ViewBiodata = () => {
   const biodata = {
     biodataType: "Female",
     name: "Ayesha Sultana",
-    profileImage: "https://i.ibb.co/FKmRprh/wedding1.jpg",
+    profileImage: `${user?.photoURL}`,
     dob: "1999-01-10",
     height: 5.4,
     weight: 52,
@@ -44,7 +48,7 @@ const ViewBiodata = () => {
   };
 
   return (
-    <div className=" lg:px-10 py-8">
+    <div className=" lg:px-12 py-8">
       <h1 className="text-3xl font-bold text-center subtitle-font mb-8">Your Biodata</h1>
 
       <div className="  space-y-6">
@@ -52,7 +56,7 @@ const ViewBiodata = () => {
           <img
             src={biodata.profileImage}
             alt="Profile"
-            className=" w-full md:w-40 h-40  object-cover border"
+            className=" w-full h-[350px] md:w-40 md:h-40  object-cover border"
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
             <p><span className="font-semibold">Name:</span> {biodata.name}</p>

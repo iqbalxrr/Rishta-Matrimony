@@ -29,7 +29,7 @@ const MyContactRequest = () => {
 
   return (
     <div className=" px-4 md:px-6 py-10">
-      <h2 className="text-3xl font-bold text-center mb-6">My Contact Requests</h2>
+      <h2 className="text-2xl font-bold text-center subtitle-font mb-6">My Contact Requests</h2>
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200 shadow-md rounded-lg overflow-hidden">

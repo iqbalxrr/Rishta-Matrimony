@@ -52,12 +52,12 @@ const GotMarried = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 md:px-6 py-10">
-      <h2 className="text-3xl font-bold text-center mb-8">Submit Your Success Story</h2>
+    <div className=" px-4 md:px-6 py-10">
+      <h2 className="text-2xl font-bold text-center subtitle-font mb-8">Submit Your Success Story</h2>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white shadow-md rounded-lg p-6 space-y-6 border border-gray-200"
+        className="bg-whitep-6 space-y-6"
       >
         {/* Self Biodata ID (readonly from context) */}
         <div>
@@ -91,7 +91,7 @@ const GotMarried = () => {
             type="file"
             accept="image/*"
             {...register('image', { required: 'Image is required' })}
-            className="w-full border px-4 py-2 rounded-md bg-white file:mr-4 file:py-1 file:px-3 file:border file:rounded file:bg-rose-500 file:text-white"
+            className="w-full border px-4 rounded-md bg-white file:mr-4 file:py-3 file:px-3 file:border file:rounded file:bg-rose-500 file:text-white"
           />
           {errors.image && (
             <p className="text-red-500 text-sm mt-1">{errors.image.message}</p>
