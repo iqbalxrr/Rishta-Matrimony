@@ -34,7 +34,7 @@ const Navbar = () => {
       }
 
       {user ? (
-        <img src={user?.photoURL} alt="" className={`w-10   rounded-full ${isOpen ? 'hidden' : 'flex'}`} />
+        <img src={user?.photoURL} alt="" className={`w-10 h-10  rounded-full ${isOpen ? 'hidden' : 'flex'}`} />
       ) : (
         <Link
           to="/loginpage"
@@ -94,7 +94,7 @@ const Navbar = () => {
               user ?
 
                 <div className="flex gap-2">
-                  <img src={user?.photoURL} alt="" className="w-10 rounded-full border-2 border-[#66451C]" />
+                  <img src={user?.photoURL} alt="" className="w-10 h-10 rounded-full border-2 border-[#66451C]" />
                   <div className="flex flex-col gap-1 primary-color">
                     <h1 className="text-[12px] overflow-hidden">{user?.displayName}</h1>
                     <h1 className="text-[12px] overflow-hidden">{user?.email}</h1>

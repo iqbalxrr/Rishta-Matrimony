@@ -10,7 +10,7 @@ import {
   FaDoorOpen,
   FaChevronRight,
 } from "react-icons/fa";
-import { AuthContext } from "../../Contex/AuthProvider";
+import { AuthContext } from "../Contex/AuthProvider";
 import Swal from "sweetalert2";
 
 
@@ -141,7 +141,7 @@ const UserDashboardLayout = () => {
               <FaChevronRight className="mt-2" />
               <NavLink to="/contac">Contact</NavLink>
             </div>
-            <img src={user?.photoURL} alt="" className="w-10 rounded-full" />
+            <img src={user?.photoURL} alt="" className="w-10 h-10 rounded-full" />
           </div>
           <Outlet />
         </main>

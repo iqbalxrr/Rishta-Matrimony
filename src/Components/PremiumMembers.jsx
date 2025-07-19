@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import MemberCard from "./MemberCard";
+// import axiosInstance from "../Axios Instance/axios";
 
 
 const members = [
@@ -14,7 +15,10 @@ const members = [
 ];
 
 const PremiumMembers = () => {
+    // const members = axiosInstance.get("/biodatas")
+
     const [sortOrder, setSortOrder] = useState("asc");
+
 
     const sortedMembers = useMemo(() => {
         return [...members].sort((a, b) =>

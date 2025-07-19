@@ -2,6 +2,8 @@
 import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { AuthContext } from '../../../Contex/AuthProvider';
+import axiosInstance from '../../../Axios Instance/axios';
+import Swal from 'sweetalert2';
 
 const divisions = [
     'Dhaka', 'Chattagra', 'Rangpur', 'Barisal', 'Khulna', 'Mymensingh', 'Sylhet',
@@ -11,7 +13,7 @@ const divisions = [
 
 const EditBiodata = () => {
 
-    const { uploadImage, uploading } = useContext(AuthContext)
+    const { uploadImage, uploading , user ,  UpdateUserProfile ,  uploadedImageUrl } = useContext(AuthContext)
 
 
 
@@ -30,9 +32,57 @@ const EditBiodata = () => {
         }
     };
 
-    const onSubmit = (data) => {
-        console.log('Form Submitted:', data);
-    };
+    const onSubmit = async (data) => {
+    if (user?.email) {
+        data.email = user.email;
+    }
+
+    try {
+        const postBioData = await axiosInstance.post("/add-biodata", data);
+      
+        const profile = {
+            displayName:data.name,
+            photoURL:uploadedImageUrl
+        }
+
+        UpdateUserProfile(profile)
+
+
+        if (postBioData.status === 200 || postBioData.status === 201) {
+
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Your biodata has been submitted successfully.',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        }
+    } 
+    catch (error) {
+         if (error.response?.status === 400) {
+       Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'You have already submitted your biodata.',
+            footer: error.message || 'Please try again later.'
+        })
+    } else {
+      Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Something went wrong while submitting your biodata!',
+            footer: error.message || 'Please try again later.'
+        });
+    }
+       
+    }
+}
+
+
+
+
 
     return (
         <div className=" px-2 sm:px-4 py-10 ">
@@ -218,7 +268,7 @@ const EditBiodata = () => {
                         <input
                             type="email"
                             readOnly
-                            value="user@email.com"
+                            value={user?.email}
                             className="w-full border rounded p-1.5 bg-gray-100"
                         />
                     </div>
@@ -234,6 +284,6 @@ const EditBiodata = () => {
             </div>
         </div>
     );
-};
+}
 
 export default EditBiodata;

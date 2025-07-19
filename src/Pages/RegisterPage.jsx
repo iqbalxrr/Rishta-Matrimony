@@ -1,26 +1,21 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { FcGoogle } from 'react-icons/fc';
-import { FaFileUpload, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { GoogleAuthProvider } from 'firebase/auth';
 import { AuthContext } from '../Contex/AuthProvider';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router';
+import axiosInstance from '../Axios Instance/axios';
 
-const imgbbAPIKey = import.meta.env.VITE_IMGBB_API_KEY;
 const provider = new GoogleAuthProvider();
 
 const RegisterPage = () => {
-
   const navigate = useNavigate();
 
   const { CreateUser, SigninWithGoogle, setUser, UpdateUserProfile } =
     useContext(AuthContext);
 
-
-  const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -30,80 +25,36 @@ const RegisterPage = () => {
     handleSubmit,
     formState: { errors },
     reset,
-    watch,
   } = useForm();
 
-  const photoFileList = watch('photo');
-
-  useEffect(() => {
-    if (photoFileList && photoFileList.length > 0) {
-      setImagePreview(URL.createObjectURL(photoFileList[0]));
-    } else {
-      setImagePreview(null);
-    }
-  }, [photoFileList]);
-
   const onSubmit = async (data) => {
-    if (!data.photo[0]) {
-      setSubmitError('Photo is required');
-      return;
-    }
-
     setLoading(true);
     setSubmitError('');
 
+    const { name, email, password } = data;
+
     try {
-      const formData = new FormData();
-      formData.append('image', data.photo[0]);
+      const userCredential = await CreateUser(email, password);
+      await UpdateUserProfile({
+        displayName: name,
+      });
 
-      const response = await axios.post(
-        `https://api.imgbb.com/1/upload?key=${imgbbAPIKey}`,
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
-
-      if (!response.data.success) {
-        throw new Error('Image upload failed');
+      const userInfo = {
+        name,
+        email,
+        role: "user"
       }
 
-      const photoURL = response.data.data.url;
+      await axiosInstance.post('/users', userInfo);
 
-      const {name , email , password } = data;
-
-      console.log(name,email,password)
-
-      // Create user section >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-       CreateUser(email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log(user)
-
-        return UpdateUserProfile({
-          displayName: name,
-          photoURL,
-        });
-      })
-      .then(() => {
-        Swal.fire({
-          title: "Signup Sucessfully!",
-          icon: "success",
-          draggable: true,
-        });
-
-        navigate("/");
-      })
-      .catch((error) => {
-        Swal.fire({
-          title: `${error.message}`,
-          icon: "error",
-          draggable: true,
-        });
+      Swal.fire({
+        title: 'Signup Successfully!',
+        icon: 'success',
+        draggable: true,
       });
-  
 
+      navigate('/');
       reset();
-      setImagePreview(null);
     } catch (error) {
       setSubmitError(error.message || 'Something went wrong');
     } finally {
@@ -111,54 +62,65 @@ const RegisterPage = () => {
     }
   };
 
-  // create user by Google >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-  function handleGoogleLogin() {
-    
+  const handleGoogleLogin = () => {
     SigninWithGoogle(provider)
-      .then((result) => {
-        setUser(result.user);
-        console.log(result.user);
-        Swal.fire({
-          title: "Signup Sucessfully!",
-          icon: "success",
-          draggable: true,
-        });
+      .then(async (result) => {
+        const googleUser = result.user;
+        setUser(googleUser);
 
-        navigate("/");
+        const userInfo = {
+          name: googleUser.displayName,
+          email: googleUser.email,
+          role: 'user',
+        };
+
+        try {
+          await axiosInstance.post('/users', userInfo);
+          Swal.fire({
+            title: 'Signup Successfully!',
+            icon: 'success',
+            draggable: true,
+          });
+          navigate('/');
+        } catch (error) {
+          console.error('Failed to save user to DB:', error.message);
+        }
       })
       .catch((error) => {
         console.log(error.message);
       });
-
-  }
+  };
 
   return (
-    <div className="min-h-screen pt-40 flex items-center justify-center px-4 py-10 sm:px-6 lg:px-8 ">
+    <div className="min-h-screen pt-40 flex items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white w-full max-w-md p-6 sm:p-8 rounded-xl shadow-lg"
       >
         <h2 className="text-2xl sm:text-3xl font-semibold mb-6 text-center subtitle-font text-rose-600">
-          Create  Account
+          Create Account
         </h2>
 
-        {submitError && <p className="text-red-500 text-sm mb-4 text-center">{submitError}</p>}
+        {submitError && (
+          <p className="text-red-500 text-sm mb-4 text-center">{submitError}</p>
+        )}
 
         <input
           type="text"
           placeholder="Full Name"
-          className={`w-full p-3 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-rose-300
-            ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
+          className={`w-full p-3 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-rose-300 ${errors.name ? 'border-red-500' : 'border-gray-300'
+            }`}
           {...register('name', { required: 'Full Name is required' })}
         />
-        {errors.name && <p className="text-red-500 text-xs mb-2">{errors.name.message}</p>}
+        {errors.name && (
+          <p className="text-red-500 text-xs mb-2">{errors.name.message}</p>
+        )}
 
         <input
           type="email"
           placeholder="Email"
-          className={`w-full p-3 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-rose-300
-            ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+          className={`w-full p-3 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-rose-300 ${errors.email ? 'border-red-500' : 'border-gray-300'
+            }`}
           {...register('email', {
             required: 'Email is required',
             pattern: {
@@ -167,15 +129,16 @@ const RegisterPage = () => {
             },
           })}
         />
-        {errors.email && <p className="text-red-500 text-xs mb-2">{errors.email.message}</p>}
+        {errors.email && (
+          <p className="text-red-500 text-xs mb-2">{errors.email.message}</p>
+        )}
 
-        {/* Password Field with Show/Hide Icon */}
         <div className="relative mb-4">
           <input
             type={showPassword ? 'text' : 'password'}
             placeholder="Password"
-            className={`w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-rose-300
-              ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
+            className={`w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-rose-300 ${errors.password ? 'border-red-500' : 'border-gray-300'
+              }`}
             {...register('password', {
               required: 'Password is required',
               minLength: {
@@ -193,39 +156,6 @@ const RegisterPage = () => {
         </div>
         {errors.password && (
           <p className="text-red-500 text-xs mb-2">{errors.password.message}</p>
-        )}
-
-        {/* File Input */}
-        <div className="mb-4">
-          <label
-            htmlFor="photo-upload"
-            className={`cursor-pointer overflow-hidden flex items-center justify-center border border-gray-300 rounded p-3 text-gray-700 hover:border-rose-500
-              ${errors.photo ? 'border-red-500 text-red-500' : ''}`}
-          >
-            <FaFileUpload className="mr-2" size={20} />
-            {photoFileList && photoFileList.length > 0
-              ? `Uploaded: ${photoFileList[0].name}`
-              : ` Choose Profile Photo`}
-          </label>
-          <input
-            id="photo-upload"
-            type="file"
-            accept="image/*"
-            className="hidden"
-            {...register('photo', { required: true })}
-          />
-          {errors.photo && <p className="text-red-500 text-xs mt-1">Photo is required</p>}
-        </div>
-
-        {/* Image Preview */}
-        {imagePreview && (
-          <div className="mb-4 text-center">
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover mx-auto border-2 border-rose-400"
-            />
-          </div>
         )}
 
         <button

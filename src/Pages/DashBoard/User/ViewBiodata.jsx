@@ -1,45 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Dialog } from '@headlessui/react';
 import { toast } from 'react-toastify';
-import { useContext } from 'react';
 import { AuthContext } from '../../../Contex/AuthProvider';
-
+import axiosInstance from '../../../Axios Instance/axios';
+import { useQuery } from '@tanstack/react-query';
 
 const ViewBiodata = () => {
-  const{user} = useContext(AuthContext)
+  const { user } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
-  // Sample biodata (replace with backend data later)
-  const biodata = {
-    biodataType: "Female",
-    name: "Ayesha Sultana",
-    profileImage: `${user?.photoURL}`,
-    dob: "1999-01-10",
-    height: 5.4,
-    weight: 52,
-    age: 25,
-    occupation: "Teacher",
-    race: "Fair",
-    fatherName: "Md. Ali",
-    motherName: "Rokeya Begum",
-    permanentDivision: "Khulna",
-    presentDivision: "Dhaka",
-    expectedPartnerAge: "26-30",
-    expectedPartnerHeight: "5.6-5.10",
-    expectedPartnerWeight: "65-75",
-    email: "ayesha@example.com",
-    mobile: "01711223344",
-  };
+  // ✅ Use TanStack Query directly to fetch biodata by email
+  const { data: biodata, isLoading, isError } = useQuery({
+    queryKey: ['biodata', user?.email],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/biodata?email=${user?.email}`);
+      return res.data.data;
+    },
+    enabled: !!user?.email, // Only run if email exists
+  });
 
-  const handlePremiumRequest = async () => {
+  const handlePremiumRequest = async (id) => {
     setIsSending(true);
     try {
-      // Replace this with your API call to send request to admin
-      await new Promise((res) => setTimeout(res, 1000));
+      await new Promise((res) => setTimeout(res, 1000)); // Placeholder
       toast.success('Biodata has been sent for premium approval.');
     } catch (err) {
-        console.log(err)
       toast.error('Failed to send request. Try again.');
     } finally {
       setIsSending(false);
@@ -47,16 +33,19 @@ const ViewBiodata = () => {
     }
   };
 
+  if (isLoading) return <p className="text-center py-10">Loading biodata...</p>;
+  if (isError || !biodata) return <p className="text-center py-10 text-red-500">Biodata not found.</p>;
+
   return (
-    <div className=" lg:px-12 py-8">
+    <div className="lg:px-12 py-8">
       <h1 className="text-3xl font-bold text-center subtitle-font mb-8">Your Biodata</h1>
 
-      <div className="  space-y-6">
-        <div className="flex flex-col md:flex-row  gap-5 lg:gap-10">
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row gap-5 lg:gap-10">
           <img
-            src={biodata.profileImage}
+            src={biodata.profileImage || user?.photoURL}
             alt="Profile"
-            className=" w-full h-[350px] md:w-40 md:h-40  object-cover border"
+            className="w-full h-[350px] md:w-40 md:h-40 object-cover border"
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
             <p><span className="font-semibold">Name:</span> {biodata.name}</p>
@@ -68,7 +57,7 @@ const ViewBiodata = () => {
 
         <hr />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 text-sm  md:text-base">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 text-sm md:text-base">
           <p><span className="font-semibold">Height:</span> {biodata.height} ft</p>
           <p><span className="font-semibold">Weight:</span> {biodata.weight} kg</p>
           <p><span className="font-semibold">Occupation:</span> {biodata.occupation}</p>
@@ -94,7 +83,7 @@ const ViewBiodata = () => {
         </div>
       </div>
 
-      {/* Confirmation Modal */}
+      {/* Modal */}
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
         <div className="fixed inset-0 bg-black/40" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
@@ -110,7 +99,7 @@ const ViewBiodata = () => {
                 Cancel
               </button>
               <button
-                onClick={handlePremiumRequest}
+                onClick={()=>handlePremiumRequest(biodata._id)}
                 disabled={isSending}
                 className="px-4 py-2 bg-rose-600 text-white rounded hover:bg-rose-700"
               >

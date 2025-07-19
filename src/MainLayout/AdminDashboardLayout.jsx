@@ -11,7 +11,7 @@ import {
   FaChevronRight,
   FaHeart,
 } from "react-icons/fa";
-import { AuthContext } from "../../Contex/AuthProvider";
+import { AuthContext } from "../Contex/AuthProvider";
 
 const AdminDashboardLayout = () => {
   const {user} = useContext(AuthContext)

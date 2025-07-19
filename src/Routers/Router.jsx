@@ -6,8 +6,8 @@ import RegisterPage from "../Pages/RegisterPage";
 import BiodatasPage from "../Pages/BiodatasPage/BiodatasPage";
 
 // Layouts
-import UserDashboardLayout from "../Pages/DashBoard/UserDashboardLayout";
-import AdminDashboardLayout from "../Pages/DashBoard/AdminDashboardLayout";
+import UserDashboardLayout from "../MainLayout/UserDashboardLayout";
+import AdminDashboardLayout from "../MainLayout/AdminDashboardLayout";
 
 // User Pages
 import MyFavourites from "../Pages/DashBoard/User/MyFavourites";
@@ -27,6 +27,7 @@ import ApprovedContactRequest from "../Pages/DashBoard/Admin/ApprovedContactRequ
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
 import SuccessStories from "../Pages/DashBoard/Admin/SuccessStories";
+
 
 
 
