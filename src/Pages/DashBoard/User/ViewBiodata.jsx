@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { AuthContext } from '../../../Contex/AuthProvider';
 import axiosInstance from '../../../Axios Instance/axios';
 import { useQuery } from '@tanstack/react-query';
+import Loader from '../../../Components/Loader';
 
 const ViewBiodata = () => {
   const { user } = useContext(AuthContext);
@@ -23,7 +24,7 @@ const ViewBiodata = () => {
   const handlePremiumRequest = async (id) => {
     setIsSending(true);
     try {
-      await new Promise((res) => setTimeout(res, 1000)); // Placeholder
+      await new Promise((res) => setTimeout(res, 1000));
       toast.success('Biodata has been sent for premium approval.');
     } catch (err) {
       toast.error('Failed to send request. Try again.');
@@ -33,7 +34,7 @@ const ViewBiodata = () => {
     }
   };
 
-  if (isLoading) return <p className="text-center py-10">Loading biodata...</p>;
+  if (isLoading) return <Loader></Loader>
   if (isError || !biodata) return <p className="text-center py-10 text-red-500">Biodata not found.</p>;
 
   return (

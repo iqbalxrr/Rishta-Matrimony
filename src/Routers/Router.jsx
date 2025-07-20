@@ -27,6 +27,8 @@ import ApprovedContactRequest from "../Pages/DashBoard/Admin/ApprovedContactRequ
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
 import SuccessStories from "../Pages/DashBoard/Admin/SuccessStories";
+import BiodataDetails from "../Components/BiodataDetails";
+import CheckoutPage from "../Pages/CheckoutPage";
 
 
 
@@ -53,6 +55,14 @@ export const router = createBrowserRouter([
         path: "/biodataspage",
         Component: BiodatasPage,
       },
+      {
+        path: "/biodata/:biodataId",
+        element: <PrivateRoute><BiodataDetails></BiodataDetails></PrivateRoute>
+      },
+      {
+        path:"/checkout/:bioId",
+        Component:CheckoutPage
+      }
     ],
   },
 

@@ -7,7 +7,13 @@
 
 @import "tailwindcss";
 
-
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
 a.active{
     color: #EC003F;
