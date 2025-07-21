@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useParams, Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { FaHeart, FaEnvelope, FaPhone } from "react-icons/fa";
@@ -6,6 +6,7 @@ import axiosInstance from "../Axios Instance/axios";
 import RelatedProfiles from "./RelatedProfiles";
 import Loader from "./Loader";
 import Swal from "sweetalert2";
+import { AuthContext } from "../Contex/AuthProvider";
 
 
 // Dummy auth hook for testing
@@ -17,7 +18,9 @@ const useAuth = () => {
 
 const BiodataDetails = () => {
   const { biodataId } = useParams();
-  const { user } = useAuth();
+  const { user } = useContext(AuthContext);
+
+  const Authemail = user?.email ;
 
   const { data: biodata, isLoading, isError } = useQuery({
     queryKey: ["biodata", biodataId],
@@ -27,41 +30,42 @@ const BiodataDetails = () => {
     },
     enabled: !!biodataId,
   });
-const handleFavourite = async (biodata) => {
-  const { name, presentDivision, occupation, bioId } = biodata;
-  const data = { name, presentDivision, occupation, bioId };
+  const handleFavourite = async (biodata) => {
+    const { name, presentDivision, occupation, bioId  } = biodata;
 
-  try {
-    const res = await axiosInstance.post("/addfevorites", data);
-   
-    console.log(res)
-    Swal.fire({
-      icon: 'success',
-      title: 'Added!',
-      text: `${name} has been added to your favourites.`,
-      timer: 2000,
-      showConfirmButton: false,
-    });
+    const data = { name, presentDivision, occupation, bioId , Authemail };
 
-  } catch (error) {
-    if (error.response?.status === 409) {
+    try {
+      const res = await axiosInstance.post("/addfevorites", data);
+
+      console.log(res)
       Swal.fire({
-        icon: 'info',
-        title: 'Already Added',
-        text: `${name} is already in your favourites.`,
+        icon: 'success',
+        title: 'Added!',
+        text: `${name} has been added to your favourites.`,
         timer: 2000,
         showConfirmButton: false,
       });
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Something went wrong while adding to favourites!',
-      });
-      console.error("Add to favourites error:", error);
+
+    } catch (error) {
+      if (error.response?.status === 409) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Already Added',
+          text: `${name} is already in your favourites.`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong while adding to favourites!',
+        });
+        console.error("Add to favourites error:", error);
+      }
     }
-  }
-};
+  };
 
   // const handleRequestContact = (bioId) => {
   //   navigate(`/checkout/${bioId}`);
@@ -79,7 +83,7 @@ const handleFavourite = async (biodata) => {
   return (
     <div className="min-h-screen bg-amber-50 pt-12 pb-20 overflow-hidden">
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-6 p-4 md:h-[100vh]">
-        
+
         {/* Left: Fixed Image */}
         <div className="h-auto md:h-[100vh] md:sticky md:top-0 mt-12 md:mt-0 overflow-hidden rounded-xl">
           <img
@@ -146,7 +150,7 @@ const handleFavourite = async (biodata) => {
             <h3 className="font-semibold text-lg mb-2 text-gray-700">
               Contact Info
             </h3>
-            {user.role === "premium" ? (
+            {biodata.isPremium  ? (
               <div>
                 <p className="flex items-center gap-2 text-green-700">
                   <FaPhone /> {biodata.mobile}
@@ -182,15 +186,17 @@ const handleFavourite = async (biodata) => {
               <FaHeart /> Add to Favourites
             </button>
             {user.role !== "premium" && (
-              <Link to={`/checkout/${biodata.bioId}`} className="">
-              <button
-              
-                className="bg-blue-600 hover:bg-blue-700 w-full text-white px-6 py-2 rounded-lg"
+              <Link
+                to={`/checkout/${biodata.bioId}?mobile=${biodata.mobile}&name=${encodeURIComponent(
+                  biodata.name
+                )}&email=${encodeURIComponent(biodata.email)}`}
+                className=""
               >
-                Request Contact Info
-              </button>
+                <button className="bg-blue-600 hover:bg-blue-700 w-full text-white px-6 py-2 rounded-lg">
+                  Request Contact Info
+                </button>
               </Link>
-              
+
             )}
           </div>
 

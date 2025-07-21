@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router';
 import axiosInstance from '../../Axios Instance/axios';
 import BiodataCard from './BiodataCard';
 import Loader from '../../Components/Loader';
@@ -8,7 +7,7 @@ import Loader from '../../Components/Loader';
 
 
 const BiodatasPage = () => {
-    const navigate = useNavigate();
+  
 
     // Filters that user edits live
     const [tempFilters, setTempFilters] = useState({

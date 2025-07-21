@@ -1,40 +1,57 @@
 import React, { useState, useContext } from 'react';
 import { Dialog } from '@headlessui/react';
-import { toast } from 'react-toastify';
 import { AuthContext } from '../../../Contex/AuthProvider';
 import axiosInstance from '../../../Axios Instance/axios';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Loader from '../../../Components/Loader';
+import Swal from 'sweetalert2';
 
 const ViewBiodata = () => {
   const { user } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const queryClient = useQueryClient();
 
-  // ✅ Use TanStack Query directly to fetch biodata by email
+  // ✅ Fetch biodata using email
   const { data: biodata, isLoading, isError } = useQuery({
     queryKey: ['biodata', user?.email],
     queryFn: async () => {
       const res = await axiosInstance.get(`/biodata?email=${user?.email}`);
       return res.data.data;
     },
-    enabled: !!user?.email, // Only run if email exists
+    enabled: !!user?.email,
   });
 
+  // ✅ Handle premium request using SweetAlert
   const handlePremiumRequest = async (id) => {
-    setIsSending(true);
-    try {
-      await new Promise((res) => setTimeout(res, 1000));
-      toast.success('Biodata has been sent for premium approval.');
-    } catch (err) {
-      toast.error('Failed to send request. Try again.');
-    } finally {
-      setIsSending(false);
-      setIsModalOpen(false);
+
+    console.log(id)
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: "You want to send request for premium biodata?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, send it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (confirm.isConfirmed) {
+      setIsSending(true);
+      try {
+        await axiosInstance.patch(`/biodata/request-premium/${id}`);
+        await queryClient.invalidateQueries(['biodata', user?.email]);
+
+        Swal.fire("Sent!", "Your request has been sent to the admin.", "success");
+        setIsModalOpen(false);
+      } catch (err) {
+        Swal.fire("Failed!", "Something went wrong. Try again.", "error");
+      } finally {
+        setIsSending(false);
+      }
     }
   };
 
-  if (isLoading) return <Loader></Loader>
+  if (isLoading) return <Loader />;
   if (isError || !biodata) return <p className="text-center py-10 text-red-500">Biodata not found.</p>;
 
   return (
@@ -75,16 +92,22 @@ const ViewBiodata = () => {
         </div>
 
         <div className="text-center pt-6">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="px-6 py-2 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-lg shadow hover:opacity-90 transition"
-          >
-            Make Biodata Premium
-          </button>
+          {biodata.isPremium ? (
+            <p className="text-green-600 font-bold">✅ Already Premium</p>
+          ) : biodata.premiumRequest ? (
+            <p className="text-yellow-600 font-semibold">⏳ Premium request already sent</p>
+          ) : (
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="px-6 py-2 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-lg shadow hover:opacity-90 transition"
+            >
+              Make Biodata Premium
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Optional Modal - Not necessary with SweetAlert, but kept for fallback */}
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
         <div className="fixed inset-0 bg-black/40" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
@@ -100,7 +123,7 @@ const ViewBiodata = () => {
                 Cancel
               </button>
               <button
-                onClick={()=>handlePremiumRequest(biodata._id)}
+                onClick={() => handlePremiumRequest(biodata.bioId)}
                 disabled={isSending}
                 className="px-4 py-2 bg-rose-600 text-white rounded hover:bg-rose-700"
               >

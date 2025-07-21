@@ -1,34 +1,42 @@
-import React, { useState } from 'react';
-import { toast } from 'react-toastify';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+
+import Swal from 'sweetalert2';
+import axiosInstance from '../../../Axios Instance/axios';
 
 const MyContactRequest = () => {
-  // Sample data (replace with backend API later)
-  const [requests, setRequests] = useState([
-    {
-      id: 1,
-      name: 'Ayesha Sultana',
-      biodataId: 'BID001',
-      status: 'approved',
-      mobile: '01711223344',
-      email: 'ayesha@example.com',
+  const { data: requests = [], isLoading, refetch } = useQuery({
+    queryKey: ['allContactRequests'],
+    queryFn: async () => {
+      const res = await axiosInstance.get('/all-contact-request');
+      return res.data;
     },
-    {
-      id: 2,
-      name: 'Mizan Rahman',
-      biodataId: 'BID002',
-      status: 'pending',
-      mobile: '',
-      email: '',
-    },
-  ]);
+  });
 
   const handleDelete = (id) => {
-    setRequests(requests.filter((req) => req.id !== id));
-    toast.success('Deleted successfully!');
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to undo this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axiosInstance.delete(`/all-contact-request/${id}`);
+          Swal.fire('Deleted!', 'Your contact request has been deleted.', 'success');
+          refetch();
+        } catch (err) {
+          Swal.fire('Failed!', 'Something went wrong.', 'error');
+        }
+      }
+    });
   };
 
   return (
-    <div className=" px-4 md:px-6 py-10">
+    <div className="px-4 md:px-6 py-10">
       <h2 className="text-2xl font-bold text-center subtitle-font mb-6">My Contact Requests</h2>
 
       <div className="overflow-x-auto">
@@ -44,40 +52,34 @@ const MyContactRequest = () => {
             </tr>
           </thead>
           <tbody>
-            {requests.length === 0 ? (
+            {isLoading ? (
               <tr>
-                <td colSpan="6" className="text-center py-6 text-gray-500">
-                  No contact requests found.
-                </td>
+                <td colSpan="6" className="text-center py-6">Loading...</td>
+              </tr>
+            ) : requests.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="text-center py-6 text-gray-500">No contact requests found.</td>
               </tr>
             ) : (
               requests.map((req, index) => (
                 <tr
-                  key={req.id}
+                  key={req._id}
                   className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50 hover:bg-gray-100'}
                 >
-                  <td className="px-4 py-3 border-b">{req.name}</td>
+                  <td className="px-4 py-3 border-b">{req.name || 'N/A'}</td>
                   <td className="px-4 py-3 border-b">{req.biodataId}</td>
                   <td className="px-4 py-3 border-b">
                     {req.status === 'approved' ? (
-                      <span className="inline-block px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">
-                        Approved
-                      </span>
+                      <span className="inline-block px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">Approved</span>
                     ) : (
-                      <span className="inline-block px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-700 rounded-full">
-                        Pending
-                      </span>
+                      <span className="inline-block px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-700 rounded-full">Pending</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 border-b">
-                    {req.status === 'approved' ? req.mobile : 'N/A'}
-                  </td>
-                  <td className="px-4 py-3 border-b">
-                    {req.status === 'approved' ? req.email : 'N/A'}
-                  </td>
+                  <td className="px-4 py-3 border-b">{req.status === 'approved' ? req.mobile : 'N/A'}</td>
+                  <td className="px-4 py-3 border-b">{req.status === 'approved' ? req.email : 'N/A'}</td>
                   <td className="px-4 py-3 text-center border-b">
                     <button
-                      onClick={() => handleDelete(req.id)}
+                      onClick={() => handleDelete(req._id)}
                       className="bg-red-500 hover:bg-red-600 text-white text-xs px-4 py-2 rounded-md transition"
                     >
                       Delete

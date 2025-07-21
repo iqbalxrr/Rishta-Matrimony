@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import {  useParams } from "react-router";
+import {  useLocation, useParams } from "react-router";
 import Swal from "sweetalert2";
 import axiosInstance from "../Axios Instance/axios";
 import { AuthContext } from "../Contex/AuthProvider";
@@ -9,7 +9,15 @@ import { AuthContext } from "../Contex/AuthProvider";
 
 const CheckoutPage = () => {
     const {bioId} = useParams();
-    console.log(bioId)
+    const location = useLocation();
+
+    const queryParams = new URLSearchParams(location.search);
+  const mobile = queryParams.get("mobile");
+  const name = queryParams.get("name");
+  const email = queryParams.get("email");
+
+  // console.log(mobile)
+
   const stripe = useStripe();
   const elements = useElements();
   const { user } = useContext(AuthContext);
@@ -54,9 +62,12 @@ const CheckoutPage = () => {
         // Save contact request to DB
         const contactData = {
           biodataId:bioId,
-          email: user.email,
+          email,
+          name,
+          mobile,
           transactionId: paymentIntent.id,
           status: "pending",
+          
         };
 
         await axiosInstance.post("/contact-requests", contactData);
@@ -97,7 +108,7 @@ const CheckoutPage = () => {
         </div>
 
         <div>
-          <label className="text-sm font-medium text-gray-700 block mb-1">Card Details</label>
+          <label className="text-sm font-medium text-gray-700 block  mb-1">Card Details</label>
           <div className="w-full border rounded px-3 py-3 bg-white">
             <CardElement options={{ style: { base: { fontSize: "16px" } } }} />
           </div>

@@ -1,28 +1,44 @@
-import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import React from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import Swal from "sweetalert2";
 
-// 🔁 এখন mock data দিয়ে করছি
-const mockPremiumRequests = [
-  { id: 1, name: "John Doe", email: "john@example.com", biodataId: "BD101" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", biodataId: "BD102" },
-  { id: 3, name: "Hasan Ali", email: "hasan@example.com", biodataId: "BD103" },
-];
+import { toast } from "react-toastify";
+import axiosInstance from "../../../Axios Instance/axios";
+
+const fetchPremiumRequests = async () => {
+  const res = await axiosInstance.get("/premium-requests");
+  return res.data;
+};
 
 const ApprovedPremium = () => {
-  const [requests, setRequests] = useState([]);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    // 👉 future: fetch from backend
-    setRequests(mockPremiumRequests);
-  }, []);
+  const { data: requests = [], isLoading } = useQuery({
+    queryKey: ["premiumRequests"],
+    queryFn: fetchPremiumRequests,
+  });
 
-  const handleMakePremium = (email) => {
-    // 👉 future: send PATCH/PUT request to backend
-    toast.success(`User ${email} is now Premium!`);
+  const handleMakePremium = async (_id, email) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: `Approve ${email} as a Premium member?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, approve it!",
+    });
 
-    // optional: remove from list after action
-    setRequests((prev) => prev.filter((user) => user.email !== email));
+    if (result.isConfirmed) {
+      try {
+        await axiosInstance.patch(`/make-premium/${_id}`);
+        toast.success(`User ${email} is now Premium!`);
+        queryClient.invalidateQueries(["premiumRequests"]); 
+      } catch (error) {
+        toast.error("Failed to approve premium");
+      }
+    }
   };
+
+  if (isLoading) return <p className="text-center mt-6">Loading...</p>;
 
   return (
     <div>
@@ -42,17 +58,17 @@ const ApprovedPremium = () => {
               </tr>
             </thead>
             <tbody>
-              {requests.map(({ id, name, email, biodataId }) => (
-                <tr key={id} className="border-b hover:bg-gray-50">
+              {requests.map(({ _id, name, email, bioId }) => (
+                <tr key={_id} className="border-b hover:bg-gray-50">
                   <td className="py-3 px-6">{name}</td>
                   <td className="py-3 px-6">{email}</td>
-                  <td className="py-3 px-6">{biodataId}</td>
+                  <td className="py-3 px-6">{bioId}</td>
                   <td className="py-3 px-6">
                     <button
-                      onClick={() => handleMakePremium(email)}
+                      onClick={() => handleMakePremium(_id, email)}
                       className="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700"
                     >
-                      Make Premium
+                      Approve Premium
                     </button>
                   </td>
                 </tr>
