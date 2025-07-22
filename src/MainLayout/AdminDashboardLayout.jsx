@@ -12,12 +12,31 @@ import {
   FaHeart,
 } from "react-icons/fa";
 import { AuthContext } from "../Contex/AuthProvider";
+import Swal from "sweetalert2";
 
 const AdminDashboardLayout = () => {
-  const { user } = useContext(AuthContext);
+  const { user , biodata , LogOut } = useContext(AuthContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
+
+
+  const HandalLogOut =() =>{
+      LogOut()
+        .then(() => {
+          Swal.fire({
+            title: "Logout Successfully",
+            icon: "success",
+          });
+        
+        })
+        .catch((error) => {
+          Swal.fire({
+            title: error.message,
+            icon: "error",
+          });
+        });
+    };
 
   const links = [
     { to: "/adminDashboard", label: "Dashboard", icon: <FaChartPie /> },
@@ -57,7 +76,7 @@ const AdminDashboardLayout = () => {
             ))}
             <button
               className="mt-10 text-red-600 hover:underline flex items-center"
-              onClick={() => alert("Logout logic goes here")}
+              onClick={HandalLogOut}
             >
               <FaDoorOpen className="mr-2" />
               Logout
@@ -103,7 +122,7 @@ const AdminDashboardLayout = () => {
                 ))}
                 <button
                   className="mt-10 text-red-600 hover:underline flex items-center"
-                  onClick={() => alert("Logout logic goes here")}
+                  onClick={HandalLogOut}
                 >
                   <FaDoorOpen className="mr-2" />
                   Logout
@@ -115,15 +134,15 @@ const AdminDashboardLayout = () => {
 
         {/* Main Content */}
         <main className="flex-1 p-6 bg-white">
-          <div className="hidden md:flex justify-between border-b-2 pb-4 border-gray-200">
-            <div className="flex md:gap-3 lg:gap-10 *:hover:text-pink-700">
+          <div className="flex justify-between border-b-2 pb-4 border-gray-200">
+            <div className="flex gap-1.5 md:gap-3 lg:gap-10 items-center *:hover:text-pink-700">
               <NavLink to="/" className="">Home </NavLink>
               <FaChevronRight className="mt-2" />
               <NavLink to="/about">About</NavLink>
               <FaChevronRight className="mt-2" />
               <NavLink to="/contac">Contact</NavLink>
             </div>
-            <img src={user?.photoURL} alt="User" className="w-10 rounded-full" />
+            <img src={biodata?.profileImage || user?.photoURL} alt="User" className="w-10 h-10 rounded-full" />
           </div>
           <Outlet />
         </main>

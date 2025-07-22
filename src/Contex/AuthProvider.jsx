@@ -116,20 +116,36 @@ const AuthProvider = ({ children }) => {
     return sendPasswordResetEmail(auth, email);
   };
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+ useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    if (currentUser) {
       setUser(currentUser);
-      setLoading(false);
-    });
+    } else {
+      setUser(null);
+    }
+    setLoading(false);
+  });
 
-    return () => unsubscribe();
-  }, []);
+  return () => unsubscribe();
+}, []);
 
-    
+// manage Authuser data section 
+
+  const { data: authUser = {},  } = useQuery({
+    queryKey: ["authUser",user?.email],
+    enabled: !! user?.email,
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/authusers?email=${user?.email}`);
+      return res.data;
+    },
+  });
+
+  // console.log(authUser)
+
   // my biodata section 
   
   // ✅ Fetch biodata using email
-    const { data: biodata  } = useQuery({
+    const { data: biodata ,isLoading , isError } = useQuery({
       queryKey: ['biodata', user?.email],
       queryFn: async () => {
         const res = await axiosInstance.get(`/biodata?email=${user?.email}`);
@@ -138,7 +154,11 @@ const AuthProvider = ({ children }) => {
       enabled: !!user?.email,
     });
 
- console.log(biodata)
+  console.log(biodata)
+
+  if(authUser.isPremium){
+    axiosInstance.post("all-premium-members" , biodata )
+  }
 
   // ✅ All values provided to children
   const info = {
@@ -159,11 +179,16 @@ const AuthProvider = ({ children }) => {
     uploadedImageUrl,
     uploadImage,
     uploading,
+   
+    // user manage section 
 
+    authUser,
 
-    // biodata value 
+    //my biodata value 
 
-    biodata 
+    biodata ,
+    isLoading,
+    isError
 
   };
 

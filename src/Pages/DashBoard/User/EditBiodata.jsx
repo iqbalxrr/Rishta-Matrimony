@@ -13,7 +13,7 @@ const divisions = [
 
 const EditBiodata = () => {
 
-    const { uploadImage, uploading , user ,  UpdateUserProfile ,  uploadedImageUrl } = useContext(AuthContext)
+    const { uploadImage, uploading , user   } = useContext(AuthContext)
 
 
 
@@ -40,12 +40,12 @@ const EditBiodata = () => {
     try {
         const postBioData = await axiosInstance.post("/add-biodata", data);
       
-        const profile = {
-            displayName:data.name,
-            photoURL:uploadedImageUrl
-        }
+        // const profile = {
+        //     displayName:data.name,
+        //     photoURL:uploadedImageUrl
+        // }
 
-        UpdateUserProfile(profile)
+        // UpdateUserProfile(profile)
 
 
         if (postBioData.status === 200 || postBioData.status === 201) {

@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { FcGoogle } from 'react-icons/fc';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { GoogleAuthProvider } from 'firebase/auth';
-import { useContext } from 'react';
 import { AuthContext } from '../Contex/AuthProvider';
 import Swal from 'sweetalert2';
-
+import axiosInstance from '../Axios Instance/axios';
 
 const provider = new GoogleAuthProvider();
 
 const LoginPage = () => {
-
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
-   const {
+  console.log(from)
+
+  const {
     SigninWithGoogle,
     setUser,
     LoginUser,
-
   } = useContext(AuthContext);
-
 
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [showPassword, setShowPassword] = useState(false);
@@ -32,56 +32,67 @@ const LoginPage = () => {
     setLoading(true);
     setLoginError('');
 
-    const {email , password} = data;
+    const { email, password } = data;
 
     try {
       LoginUser(email, password)
-      .then((result) => {
-        setUser(result.user);
-        Swal.fire({
-          title: "Login Sucessfully!",
-          icon: "success",
-          draggable: true,
+        .then((result) => {
+          setUser(result.user);
+          Swal.fire({
+            title: "Login Successfully!",
+            icon: "success",
+            draggable: true,
+          });
+          setTimeout(() => {
+            navigate(from, { replace: true });
+          }, 1000);
+        })
+        .catch((error) => {
+          Swal.fire({
+            title: `${error.message}`,
+            icon: "error",
+            draggable: true,
+          });
         });
-        navigate(location.state? location.state : "/" );
-      })
-      .catch((error) => {
-        // setErrorMessage(error.message);
-        Swal.fire({
-          title: `${error.message}`,
-          icon: "error",
-          draggable: true,
-        });
-      });
-      console.log('Logging in:', data);
     } catch (error) {
       setLoginError('Login failed. Please check your credentials.');
-      console.log(error)
+      console.log(error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleLogin = () => {
-   SigninWithGoogle(provider)
-         .then((result) => {
-           setUser(result.user);
-           console.log(result.user);
-           Swal.fire({
-             title: "Login Sucessfully!",
-             icon: "success",
-             draggable: true,
-           });
-   
-           navigate("/");
-         })
-         .catch((error) => {
-           console.log(error.message);
-         });
+    SigninWithGoogle(provider)
+      .then(async (result) => {
+        const googleUser = result.user;
+        setUser(googleUser);
+
+        const userInfo = {
+          name: googleUser.displayName,
+          email: googleUser.email,
+          role: 'user',
+        };
+
+        try {
+          await axiosInstance.post('/users', userInfo);
+          Swal.fire({
+            title: 'Signup Successfully!',
+            icon: 'success',
+            draggable: true,
+          });
+          navigate(from, { replace: true });
+        } catch (error) {
+          console.error('Failed to save user to DB:', error.message);
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
   };
 
   return (
-    <div className="min-h-screen  flex items-center justify-center px-4 py-10 sm:px-6 lg:px-8 ">
+    <div className="min-h-screen flex items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white w-full max-w-md p-6 sm:p-8 rounded-xl shadow-lg"

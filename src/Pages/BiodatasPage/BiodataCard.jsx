@@ -43,7 +43,7 @@ const BiodataCard = ({ data }) => {
 
             <div className="flex justify-between mt-4">
                 <button className=" border rounded-full border-pink-500 px-4 py-1"><FaShareAlt size={23} /></button>
-                <Link to={`/biodata/${data._id}`}><button 
+                <Link to={`/biodata/${data.bioId}`}><button 
                 
                 className="bg-pink-600 text-white px-3 py-2 rounded-full text-sm hover:bg-pink-700">
                     View Full Biodata

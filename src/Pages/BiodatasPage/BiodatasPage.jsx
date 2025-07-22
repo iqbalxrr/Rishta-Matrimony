@@ -25,7 +25,7 @@ const BiodatasPage = () => {
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 9;
+    const itemsPerPage = 12;
 
     // Fetch all biodatas
     const { data: allBiodata = [], isLoading } = useQuery({

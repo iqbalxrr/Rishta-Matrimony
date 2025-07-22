@@ -1,12 +1,11 @@
 import React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
-
-import { toast } from "react-toastify";
 import axiosInstance from "../../../Axios Instance/axios";
 
+// ✅ API call to fetch all premium requests
 const fetchPremiumRequests = async () => {
-  const res = await axiosInstance.get("/premium-requests");
+  const res = await axiosInstance.get("/requestedpremiumuser");
   return res.data;
 };
 
@@ -18,7 +17,8 @@ const ApprovedPremium = () => {
     queryFn: fetchPremiumRequests,
   });
 
-  const handleMakePremium = async (_id, email) => {
+  // ✅ Approve user as premium using SweetAlert2 only
+  const handleMakePremium = async (email) => {
     const result = await Swal.fire({
       title: "Are you sure?",
       text: `Approve ${email} as a Premium member?`,
@@ -29,11 +29,21 @@ const ApprovedPremium = () => {
 
     if (result.isConfirmed) {
       try {
-        await axiosInstance.patch(`/make-premium/${_id}`);
-        toast.success(`User ${email} is now Premium!`);
-        queryClient.invalidateQueries(["premiumRequests"]); 
+        await axiosInstance.patch(`/make-premium/${email}`);
+
+        await Swal.fire({
+          icon: "success",
+          title: "Approved!",
+          text: `${email} is now a premium user.`,
+        });
+
+        queryClient.invalidateQueries(["premiumRequests"]);
       } catch (error) {
-        toast.error("Failed to approve premium");
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong while approving!",
+        });
       }
     }
   };
@@ -65,7 +75,7 @@ const ApprovedPremium = () => {
                   <td className="py-3 px-6">{bioId}</td>
                   <td className="py-3 px-6">
                     <button
-                      onClick={() => handleMakePremium(_id, email)}
+                      onClick={() => handleMakePremium(email)}
                       className="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700"
                     >
                       Approve Premium

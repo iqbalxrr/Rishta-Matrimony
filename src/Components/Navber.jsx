@@ -8,7 +8,7 @@ const Navbar = () => {
 
   const toggleDrawer = () => setIsOpen(!isOpen);
 
-  const { user } = useContext(AuthContext)
+  const { user, biodata , authUser } = useContext(AuthContext)
 
   const handleLinkClick = () => {
     if (isOpen) {
@@ -17,7 +17,7 @@ const Navbar = () => {
   };
 
 
-  console.log(user)
+  // console.log(user)
 
   const navLinks = (
     <>
@@ -27,12 +27,28 @@ const Navbar = () => {
       <NavLink to="/contact" onClick={handleLinkClick} className="block py-2 hover:text-blue-500">Contact</NavLink>
 
       {
-         user&&   <NavLink to="/userDashboard" onClick={handleLinkClick} className="block py-2 hover:text-blue-500">Dashboard</NavLink>
-      }
-      {
-         user&&   <NavLink to="/adminDashboard" onClick={handleLinkClick} className="block py-2 hover:text-blue-500">Admin Dashboard</NavLink>
+        user && authUser?.role !== "admin" && (
+          <NavLink
+            to="/userDashboard"
+            onClick={handleLinkClick}
+            className="block py-2 hover:text-blue-500"
+          >
+            Dashboard
+          </NavLink>
+        )
       }
 
+      {
+        user && authUser?.role === "admin" && (
+          <NavLink
+            to="/adminDashboard"
+            onClick={handleLinkClick}
+            className="block py-2 hover:text-blue-500"
+          >
+            Admin Dashboard
+          </NavLink>
+        )
+      }
       {user ? (
         <img src={user?.photoURL} alt="" className={`w-10 h-10  rounded-full ${isOpen ? 'hidden' : 'flex'}`} />
       ) : (
@@ -94,10 +110,12 @@ const Navbar = () => {
               user ?
 
                 <div className="flex gap-2">
-                  <img src={user?.photoURL} alt="" className="w-10 h-10 rounded-full border-2 border-[#66451C]" />
+                  <img
+                    src={biodata?.profileImage || user?.photoURL}
+                    alt="" className="w-10 h-10 rounded-full border-2 border-[#66451C]" />
                   <div className="flex flex-col gap-1 primary-color">
-                    <h1 className="text-[12px] overflow-hidden">{user?.displayName}</h1>
-                    <h1 className="text-[12px] overflow-hidden">{user?.email}</h1>
+                    <h1 className="text-[12px] overflow-hidden">{biodata?.name || user?.displayName}</h1>
+                    <h1 className="text-[12px] overflow-hidden uppercase"> BioID : {biodata?.bioId || user?.email}</h1>
                   </div>
                 </div>
 

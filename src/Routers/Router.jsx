@@ -25,10 +25,10 @@ import ApprovedContactRequest from "../Pages/DashBoard/Admin/ApprovedContactRequ
 
 // Route Guards (Assuming you'll implement them)
 import PrivateRoute from "./PrivateRoute";
-import AdminRoute from "./AdminRoute";
 import SuccessStories from "../Pages/DashBoard/Admin/SuccessStories";
 import BiodataDetails from "../Components/BiodataDetails";
 import CheckoutPage from "../Pages/CheckoutPage";
+import PrivateAdmin from "./PrivateAdmin";
 
 
 
@@ -106,7 +106,9 @@ export const router = createBrowserRouter([
     path: "/adminDashboard",
     element: (
       
-        <AdminDashboardLayout />
+        <PrivateAdmin>
+          <AdminDashboardLayout />
+        </PrivateAdmin>
     ),
     children: [
       {

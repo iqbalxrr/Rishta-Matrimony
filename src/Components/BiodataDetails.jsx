@@ -9,16 +9,9 @@ import Swal from "sweetalert2";
 import { AuthContext } from "../Contex/AuthProvider";
 
 
-// Dummy auth hook for testing
-const useAuth = () => {
-  return {
-    user: { role: "normal" }, // Change to "premium" to test contact visibility
-  };
-};
-
 const BiodataDetails = () => {
   const { biodataId } = useParams();
-  const { user } = useContext(AuthContext);
+  const { user , authUser } = useContext(AuthContext);
 
   const Authemail = user?.email ;
 
@@ -150,7 +143,7 @@ const BiodataDetails = () => {
             <h3 className="font-semibold text-lg mb-2 text-gray-700">
               Contact Info
             </h3>
-            {biodata.isPremium  ? (
+            {authUser.isPremium  ? (
               <div>
                 <p className="flex items-center gap-2 text-green-700">
                   <FaPhone /> {biodata.mobile}
