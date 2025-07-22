@@ -1,47 +1,73 @@
-import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import React, { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-// 🔁 mock data (পরে backend থেকে fetch করবে)
-const mockUsers = [
-  { id: 1, name: "John Doe", email: "john@example.com", isAdmin: false, isPremiumRequested: true },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", isAdmin: false, isPremiumRequested: false },
-  { id: 3, name: "Admin User", email: "admin@example.com", isAdmin: true, isPremiumRequested: false },
-];
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import axiosInstance from "../../../Axios Instance/axios";
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const queryClient = useQueryClient();
 
-  // এখানে তুমি পরে backend থেকে fetch করবে
-  useEffect(() => {
-    setUsers(mockUsers); // এখন mock data use করছি
-  }, []);
+  const { data, isLoading } = useQuery({
+    queryKey: ["users", searchTerm, roleFilter, page],
+    queryFn: async () => {
+      const res = await axiosInstance.get(
+        `/users?name=${searchTerm}&role=${roleFilter}&page=${page}&limit=${limit}`
+      );
+      return res.data;
+    },
+  });
 
-  const handleMakeAdmin = (email) => {
-    // 🔁 এখানে backend request যাবে
-    toast.success(`Admin made: ${email}`);
-  };
+  const users = data?.users || [];
+  const totalPages = data?.totalPages || 1;
 
-  const handleMakePremium = (email) => {
-    // 🔁 এখানে backend request যাবে
-    toast.success(`Premium made: ${email}`);
-  };
-
-  const handleSearch = async (e) => {
+  const handleSearch = (e) => {
     e.preventDefault();
-    // 🔁 এখানে real server-side search হবে
-    const filtered = mockUsers.filter((user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setUsers(filtered);
+    setPage(1);
+  };
+
+  const handleMakeAdmin = async (email) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: `Make ${email} an Admin?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+    });
+
+    if (result.isConfirmed) {
+      await axiosInstance.patch(`/make-admin/${email}`);
+      toast.success("User is now Admin");
+      queryClient.invalidateQueries(["users"]);
+    }
+  };
+
+  const handleMakePremium = async (email) => {
+    const result = await Swal.fire({
+      title: "Approve Premium?",
+      text: `Give premium access to ${email}?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+    });
+
+    if (result.isConfirmed) {
+      await axiosInstance.patch(`/make-premium/${email}`);
+      toast.success("User upgraded to Premium");
+      queryClient.invalidateQueries(["users"]);
+    }
   };
 
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Manage Users</h1>
 
-      {/* Search */}
-      <form onSubmit={handleSearch} className="mb-6 flex gap-3">
+      {/* Search & Filter */}
+      <form onSubmit={handleSearch} className="mb-6 flex gap-3 flex-wrap">
         <input
           type="text"
           placeholder="Search by username"
@@ -49,6 +75,15 @@ const ManageUsers = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border p-2 rounded w-full max-w-xs"
         />
+        <select
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value)}
+          className="border p-2 rounded"
+        >
+          <option value="">All Roles</option>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
         <button
           type="submit"
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -57,25 +92,29 @@ const ManageUsers = () => {
         </button>
       </form>
 
-      {/* User Table */}
+      {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full table-auto border-collapse shadow rounded overflow-hidden">
           <thead className="bg-blue-600 text-white">
             <tr>
               <th className="py-3 px-4 text-left">Name</th>
               <th className="py-3 px-4 text-left">Email</th>
-              <th className="py-3 px-4 text-left">Make Admin</th>
-              <th className="py-3 px-4 text-left">Make Premium</th>
+              <th className="py-3 px-4 text-left">Role</th>
+              <th className="py-3 px-4 text-left">Premium</th>
             </tr>
           </thead>
           <tbody>
-            {users.length > 0 ? (
+            {isLoading ? (
+              <tr>
+                <td colSpan="4" className="text-center py-5">Loading...</td>
+              </tr>
+            ) : users.length ? (
               users.map((user) => (
-                <tr key={user.id} className="border-b hover:bg-gray-50">
+                <tr key={user._id} className="border-b hover:bg-gray-50">
                   <td className="py-3 px-4">{user.name}</td>
                   <td className="py-3 px-4">{user.email}</td>
                   <td className="py-3 px-4">
-                    {user.isAdmin ? (
+                    {user.role === "admin" ? (
                       <span className="text-green-600 font-semibold">Admin</span>
                     ) : (
                       <button
@@ -87,13 +126,15 @@ const ManageUsers = () => {
                     )}
                   </td>
                   <td className="py-3 px-4">
-                    {user.isPremiumRequested ? (
+                    {user.premiumRequest ? (
                       <button
                         onClick={() => handleMakePremium(user.email)}
                         className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
                       >
                         Make Premium
                       </button>
+                    ) : user.isPremium ? (
+                      <span className="text-green-600 font-semibold">Premium</span>
                     ) : (
                       <span className="text-gray-400 italic">No request</span>
                     )}
@@ -109,6 +150,25 @@ const ManageUsers = () => {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Pagination */}
+      <div className="mt-6 flex justify-center gap-2">
+        <button
+          onClick={() => setPage((p) => Math.max(p - 1, 1))}
+          disabled={page === 1}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Prev
+        </button>
+        <span className="px-4 py-1">Page {page} of {totalPages}</span>
+        <button
+          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+          disabled={page === totalPages}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </div>
   );

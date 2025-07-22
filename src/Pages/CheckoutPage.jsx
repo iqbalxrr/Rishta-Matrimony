@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import {  useLocation, useParams } from "react-router";
+import {  useParams } from "react-router";
 import Swal from "sweetalert2";
 import axiosInstance from "../Axios Instance/axios";
 import { AuthContext } from "../Contex/AuthProvider";
@@ -9,18 +9,14 @@ import { AuthContext } from "../Contex/AuthProvider";
 
 const CheckoutPage = () => {
     const {bioId} = useParams();
-    const location = useLocation();
+   
 
-    const queryParams = new URLSearchParams(location.search);
-  const mobile = queryParams.get("mobile");
-  const name = queryParams.get("name");
-  const email = queryParams.get("email");
 
   // console.log(mobile)
 
   const stripe = useStripe();
   const elements = useElements();
-  const { user } = useContext(AuthContext);
+  const { user , biodata } = useContext(AuthContext);
 
 
   const [clientSecret, setClientSecret] = useState("");
@@ -62,9 +58,10 @@ const CheckoutPage = () => {
         // Save contact request to DB
         const contactData = {
           biodataId:bioId,
-          email,
-          name,
-          mobile,
+          requestBioId:biodata.bioId,
+          requestEmail:biodata.email,
+          requestName:biodata.name,
+          requestMobile:biodata.mobile,
           transactionId: paymentIntent.id,
           status: "pending",
           
@@ -74,8 +71,10 @@ const CheckoutPage = () => {
         Swal.fire("Success", "Contact request submitted!", "success");
       }
     } catch (err) {
-      console.error(err);
-      Swal.fire("Error", "Something went wrong", "error");
+      if(err.status == 409){
+
+        Swal.fire("Error", "You have already requested this contact info", "error");
+      }
     } finally {
       setLoading(false);
     }

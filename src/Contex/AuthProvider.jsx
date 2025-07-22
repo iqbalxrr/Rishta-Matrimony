@@ -10,6 +10,8 @@ import {
 import React, { createContext, useEffect, useState } from "react";
 import auth from "../Firebase/firebase.config";
 import { toast, Bounce } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "../Axios Instance/axios";
 
 // Create context
 export const AuthContext = createContext({});
@@ -123,6 +125,21 @@ const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
+    
+  // my biodata section 
+  
+  // ✅ Fetch biodata using email
+    const { data: biodata  } = useQuery({
+      queryKey: ['biodata', user?.email],
+      queryFn: async () => {
+        const res = await axiosInstance.get(`/biodata?email=${user?.email}`);
+        return res.data.data;
+      },
+      enabled: !!user?.email,
+    });
+
+ console.log(biodata)
+
   // ✅ All values provided to children
   const info = {
     user,
@@ -142,6 +159,12 @@ const AuthProvider = ({ children }) => {
     uploadedImageUrl,
     uploadImage,
     uploading,
+
+
+    // biodata value 
+
+    biodata 
+
   };
 
   return <AuthContext.Provider value={info}>{children}</AuthContext.Provider>;

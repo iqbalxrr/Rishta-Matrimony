@@ -3,21 +3,22 @@ import { useQuery } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../Axios Instance/axios";
+import { useContext } from "react";
+import { AuthContext } from "../../../Contex/AuthProvider";
 
 const ApprovedContactRequest = () => {
-  const fetchContactRequests = async () => {
-    const res = await axiosInstance.get("/all-contact-request");
-    return res.data;
-  };
 
-  const {
-    data: requests = [],
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["contactRequests"],
-    queryFn: fetchContactRequests,
+    const { biodata } = useContext(AuthContext)
+
+  const { data: requests = [], isLoading, refetch } = useQuery({
+    queryKey: ['allContactRequests', biodata?.bioId],
+    enabled: !!biodata?.bioId,
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/all-contact-request/${biodata.bioId}`);
+      return res.data;
+    },
   });
+
 
   const handleApprove = async (id) => {
     const confirm = await Swal.fire({
@@ -68,11 +69,11 @@ const ApprovedContactRequest = () => {
               </tr>
             </thead>
             <tbody>
-              {requests.map(({ _id, name, email, biodataId, status }) => (
+              {requests.map(({ _id, requestName, requestEmail, requestBioId, status }) => (
                 <tr key={_id} className="border-b hover:bg-gray-50">
-                  <td className="py-3 px-6">{name}</td>
-                  <td className="py-3 px-6">{email}</td>
-                  <td className="py-3 px-6">{biodataId}</td>
+                  <td className="py-3 px-6">{requestName}</td>
+                  <td className="py-3 px-6">{requestEmail}</td>
+                  <td className="py-3 px-6">{requestBioId}</td>
                   <td className="py-3 px-6">
                     {status === "approved" ? (
                       <span className="text-green-600 font-semibold">

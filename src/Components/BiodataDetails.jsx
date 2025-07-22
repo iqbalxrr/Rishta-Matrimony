@@ -187,9 +187,7 @@ const BiodataDetails = () => {
             </button>
             {user.role !== "premium" && (
               <Link
-                to={`/checkout/${biodata.bioId}?mobile=${biodata.mobile}&name=${encodeURIComponent(
-                  biodata.name
-                )}&email=${encodeURIComponent(biodata.email)}`}
+                to={`/checkout/${biodata.bioId}`}
                 className=""
               >
                 <button className="bg-blue-600 hover:bg-blue-700 w-full text-white px-6 py-2 rounded-lg">
