@@ -36,6 +36,8 @@ const BiodatasPage = () => {
         },
     });
 
+    // console.log(allBiodata)
+
     // Filter biodata based on applied filters
     const filteredBiodata = useMemo(() => {
         return allBiodata.filter(item => {

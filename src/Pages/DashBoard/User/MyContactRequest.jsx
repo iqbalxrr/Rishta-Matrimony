@@ -49,8 +49,8 @@ const MyContactRequest = () => {
     <div className="px-4 md:px-6 py-10">
       <h2 className="text-2xl font-bold text-center subtitle-font mb-6">My Contact Requests</h2>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200 shadow-md rounded-lg overflow-hidden">
+      <div className="">
+        <table className="min-w-full bg-white border border-gray-200 shadow-md rounded-lg overflow-x-scroll">
           <thead className="bg-gradient-to-r from-rose-100 to-pink-100 text-gray-700 text-sm md:text-base uppercase tracking-wide">
             <tr>
               <th className="text-left px-4 py-3 border-b">Name</th>

@@ -133,8 +133,8 @@ const UserDashboardLayout = () => {
 
         {/* Main Content */}
         <main className="flex-1 text-xl p-6 items-center bg-white">
-          <div className="hidden md:flex justify-between border-b-2 pb-4 border-gray-200">
-            <div className="flex md:gap-3 lg:gap-10 *:hover:text-pink-700">
+          <div className="flex justify-between items-center border-b-2 pb-4 border-gray-200">
+            <div className="flex gap-1.5 md:gap-3 lg:gap-10 *:hover:text-pink-700">
               <NavLink to="/" className="">Home </NavLink>
               <FaChevronRight className="mt-2" />
               <NavLink to="/about">About</NavLink>

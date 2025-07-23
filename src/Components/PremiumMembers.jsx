@@ -42,7 +42,7 @@ const PremiumMembers = () => {
           <select
             onChange={(e) => setSortOrder(e.target.value)}
             value={sortOrder}
-            className="border border-rose-500 rounded px-3 py-1 mt-10 md:mt-0 w-[230px]"
+            className="border border-[#66451C] rounded px-3 py-1 mt-10 md:mt-0 w-[230px]"
           >
             <option value="asc">Sort by Age: Ascending</option>
             <option value="desc">Sort by Age: Descending</option>

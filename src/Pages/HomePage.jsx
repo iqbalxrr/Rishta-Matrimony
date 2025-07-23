@@ -7,6 +7,7 @@ import HowItWorks from '../Components/HowItWorks';
 import WelcomeSection from '../Components/WelcomeSection';
 import TrustedSection from '../Components/TrustedSection';
 import SuccessStory from '../Components/SuccessStory';
+import RecentCouplesSlider from '../Components/RecentCouplesSlider';
 
 
 const HomePage = () => {
@@ -18,6 +19,7 @@ const HomePage = () => {
             <HowItWorks></HowItWorks>
             <WelcomeSection></WelcomeSection>
             <TrustedSection></TrustedSection>
+            <RecentCouplesSlider></RecentCouplesSlider>
             <SuccessStory></SuccessStory>
         </div>
     );

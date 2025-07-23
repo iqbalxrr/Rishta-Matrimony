@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 
 const BiodataCard = ({ data }) => {
 
-    console.log(data._id)
+    // console.log(data._id)
     return (
         <div className="  bg-white shadow-lg rounded-xl p-4 text-gray-800 font-sans">
             <div className="flex items-center  mb-4">

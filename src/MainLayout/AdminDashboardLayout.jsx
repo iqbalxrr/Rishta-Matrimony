@@ -94,7 +94,7 @@ const AdminDashboardLayout = () => {
 
         {/* Mobile Drawer */}
         {drawerOpen && (
-          <div className="fixed inset-0 z-50 bg-black bg-opacity-50">
+          <div className="fixed inset-0 z-50 bg-black/40 bg-opacity-50">
             <div
               className="absolute top-0 right-0 w-64 h-full bg-blue-100 p-6 shadow-lg"
               onClick={(e) => e.stopPropagation()}

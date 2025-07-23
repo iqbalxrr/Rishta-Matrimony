@@ -131,8 +131,8 @@ const OurServices = () => {
                     style={{ backgroundImage: `url(${item.image})` }}
                   ></div>
 
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-black/50 group-hover:bg-rose-500/70 rounded-xl transition-all duration-300 z-0"></div>
+                
+                  <div className="absolute inset-0 bg-black/50  rounded-xl transition-all duration-300 z-0"></div> 
 
                   {/* Content */}
                   <div className="flex flex-col justify-center items-center p-6 text-center h-full relative z-10 transition-opacity duration-300 group-hover:opacity-0">
@@ -146,11 +146,7 @@ const OurServices = () => {
                   </div>
 
                   {/* Button */}
-                  <button
-                    className="absolute subtitle-font z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-black px-6 py-2 rounded-full font-semibold top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                  >
-                    View Details
-                  </button>
+                
                 </div>
               </div>
             ))}
