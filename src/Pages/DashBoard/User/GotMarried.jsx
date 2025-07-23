@@ -1,10 +1,15 @@
 import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { AuthContext } from '../../../Contex/AuthProvider';
+import { useMutation } from '@tanstack/react-query';
 
+import Swal from 'sweetalert2';
+import { AuthContext } from '../../../Contex/AuthProvider';
+import axiosInstance from '../../../Axios Instance/axios';
 
 const GotMarried = () => {
-  const { user, uploadImage, SuccessTost, ErrorTost } = useContext(AuthContext);
+  const {  uploadImage, biodata } = useContext(AuthContext);
+  const [uploadingImg, setUploadingImg] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -12,11 +17,23 @@ const GotMarried = () => {
     formState: { errors },
   } = useForm();
 
-  const [uploadingImg, setUploadingImg] = useState(false);
+  const mutation = useMutation({
+    mutationFn: async (storyData) => {
+      const res = await axiosInstance.post('/success-story', storyData);
+      return res.data;
+    },
+    onSuccess: () => {
+      Swal.fire('Success!', 'Your story has been submitted.', 'success');
+      reset();
+    },
+    onError: () => {
+      Swal.fire('Error', 'Failed to submit the story.', 'error');
+    },
+  });
 
   const onSubmit = async (data) => {
     if (!data.image[0]) {
-      return ErrorTost('Please select an image.');
+      return Swal.fire('Error', 'Please select an image.', 'error');
     }
 
     setUploadingImg(true);
@@ -24,67 +41,90 @@ const GotMarried = () => {
     try {
       const imageUrl = await uploadImage(data.image[0]);
 
-      if (!imageUrl) {
-        return;
-      }
-
       const story = {
-        selfId: user?.uid || 'Unknown UID',
-        partnerId: data.partnerId,
-        imageUrl,
-        review: data.review,
+        selfId: parseInt(biodata.bioId),
+        partnerId: parseInt(data.partnerId),
+        title: data.title,
+        coupleImage: imageUrl,
+        marriageDate: data.marriageDate,
+        rating: parseInt(data.rating),
+        story: data.story,
         createdAt: new Date().toISOString(),
       };
 
-      console.log('Success Story to submit:', story);
-
-      // ✅ Submit to backend (replace with actual DB call later)
-      // await addDoc(collection(db, 'successStories'), story);
-
-      SuccessTost('Your success story has been submitted!');
-      reset();
-    } catch (error) {
-      console.error(error);
-      ErrorTost('Submission failed');
+      mutation.mutate(story);
+    } catch (err) {
+      console.error(err);
+      Swal.fire('Error', 'Submission failed.', 'error');
     } finally {
       setUploadingImg(false);
     }
   };
 
   return (
-    <div className=" px-4 md:px-6 py-10">
+    <div className="px-4 md:px-6 py-10">
       <h2 className="text-2xl font-bold text-center subtitle-font mb-8">Submit Your Success Story</h2>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-whitep-6 space-y-6"
-      >
-        {/* Self Biodata ID (readonly from context) */}
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-6 space-y-6">
+        {/* Self ID */}
         <div>
           <label className="block font-medium mb-1">Your Biodata ID</label>
           <input
             type="text"
-            value={user?.uid || ''}
+            value={biodata.bioId}
             readOnly
             className="w-full border px-4 py-2 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
           />
         </div>
 
-        {/* Partner Biodata ID */}
+        {/* Partner ID */}
         <div>
           <label className="block font-medium mb-1">Partner Biodata ID</label>
           <input
-            type="text"
+            type="number"
             {...register('partnerId', { required: 'Partner ID is required' })}
-            placeholder="e.g., BID456"
             className="w-full border px-4 py-2 rounded-md outline-none focus:ring-2 ring-rose-400"
           />
-          {errors.partnerId && (
-            <p className="text-red-500 text-sm mt-1">{errors.partnerId.message}</p>
-          )}
+          {errors.partnerId && <p className="text-red-500 text-sm mt-1">{errors.partnerId.message}</p>}
         </div>
 
-        {/* Couple Image Upload */}
+        {/* Title */}
+        <div>
+          <label className="block font-medium mb-1">Title</label>
+          <input
+            type="text"
+            {...register('title', { required: 'Title is required' })}
+            placeholder="e.g., Online Bond"
+            className="w-full border px-4 py-2 rounded-md outline-none focus:ring-2 ring-rose-400"
+          />
+          {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
+        </div>
+
+        {/* Marriage Date */}
+        <div>
+          <label className="block font-medium mb-1">Marriage Date</label>
+          <input
+            type="date"
+            {...register('marriageDate', { required: 'Marriage date is required' })}
+            className="w-full border px-4 py-2 rounded-md outline-none focus:ring-2 ring-rose-400"
+          />
+          {errors.marriageDate && <p className="text-red-500 text-sm mt-1">{errors.marriageDate.message}</p>}
+        </div>
+
+        {/* Rating */}
+        <div>
+          <label className="block font-medium mb-1">Rating (1-5)</label>
+          <input
+            type="number"
+            min="1"
+            max="5"
+            {...register('rating', { required: 'Rating is required' })}
+            className="w-full border px-4 py-2 rounded-md outline-none focus:ring-2 ring-rose-400"
+          />
+          {errors.rating && <p className="text-red-500 text-sm mt-1">{errors.rating.message}</p>}
+        </div>
+
+        {/* Image Upload */}
         <div>
           <label className="block font-medium mb-1">Couple Image</label>
           <input
@@ -93,35 +133,33 @@ const GotMarried = () => {
             {...register('image', { required: 'Image is required' })}
             className="w-full border px-4 rounded-md bg-white file:mr-4 file:py-3 file:px-3 file:border file:rounded file:bg-rose-500 file:text-white"
           />
-          {errors.image && (
-            <p className="text-red-500 text-sm mt-1">{errors.image.message}</p>
-          )}
+          {errors.image && <p className="text-red-500 text-sm mt-1">{errors.image.message}</p>}
         </div>
 
-        {/* Review */}
+        {/* Story */}
         <div>
-          <label className="block font-medium mb-1">Success Story / Review</label>
+          <label className="block font-medium mb-1">Success Story</label>
           <textarea
-            {...register('review', { required: 'Review is required' })}
+            {...register('story', { required: 'Your story is required' })}
             rows="5"
-            placeholder="Share your love journey and how this platform helped you."
+            placeholder="Share how you found love on our platform..."
             className="w-full border px-4 py-2 rounded-md outline-none focus:ring-2 ring-rose-400 resize-none"
           ></textarea>
-          {errors.review && (
-            <p className="text-red-500 text-sm mt-1">{errors.review.message}</p>
-          )}
+          {errors.story && <p className="text-red-500 text-sm mt-1">{errors.story.message}</p>}
         </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <div className="text-center">
           <button
             type="submit"
-            disabled={uploadingImg}
+            disabled={uploadingImg || mutation.isPending}
             className={`${
-              uploadingImg ? 'bg-gray-400' : 'bg-gradient-to-r from-rose-500 to-pink-500'
+              uploadingImg || mutation.isPending
+                ? 'bg-gray-400'
+                : 'bg-gradient-to-r from-rose-500 to-pink-500'
             } text-white px-6 py-2 rounded-md font-medium hover:opacity-90 transition`}
           >
-            {uploadingImg ? 'Uploading...' : 'Submit Story'}
+            {uploadingImg || mutation.isPending ? 'Uploading...' : 'Submit Story'}
           </button>
         </div>
       </form>

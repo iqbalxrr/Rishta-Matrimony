@@ -4,34 +4,36 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
+
+
 const testimonials = [
   {
     name: 'JACK DANIAL',
     location: 'New York',
-    image: 'https://i.ibb.co/0f4rY3j/user1.jpg',
+    image: 'https://i.ibb.co/sJDVfgFb/9.jpg',
     text: 'We found our perfect match within a few weeks. The platform is truly made for serious relationships!',
   },
   {
     name: 'SOPHIA RICHARDS',
     location: 'California',
-    image: 'https://i.ibb.co/4dTxVKm/user2.jpg',
+    image: 'https://i.ibb.co/VYBxmLRb/8.jpg',
     text: 'I loved how easy it was to navigate and connect with genuine profiles. Thank you for helping me find love!',
   },
   {
     name: 'MAYA THOMSON',
     location: 'Texas',
-    image: 'https://i.ibb.co/SxB0RJ2/user3.jpg',
+    image: 'https://i.ibb.co/WN3Pxs9Q/7.jpg',
     text: 'I never thought I’d meet someone online, but this matrimony site changed my life. Highly recommended!',
   },
   {
     name: 'RAHUL VERMA',
     location: 'New Jersey',
-    image: '/img1.png',
+    image: 'https://i.ibb.co/v4Zhqvn6/6.jpg',
     text: 'Very professional and secure platform. The verification process gave me a lot of confidence.',
   },
 ];
 
-// Custom Arrows
+
 const PrevArrow = ({ onClick }) => (
   <button
     onClick={onClick}

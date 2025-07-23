@@ -16,12 +16,12 @@ const Contact = () => {
   };
 
   return (
-    <section className="bg-white py-16 px-4" id="contact">
+    <section className=" py-32 px-4 min-h-[70vh]" id="contact">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-4xl font-bold text-center text-gray-800 mb-10">Contact Us</h2>
         <form
           onSubmit={handleSubmit}
-          className="bg-[#f9f5f2] p-8 rounded-lg shadow-lg grid gap-6"
+          className="p-8 grid gap-6"
         >
           <input
             type="text"
@@ -48,7 +48,7 @@ const Contact = () => {
             value={form.message}
             onChange={handleChange}
             required
-            className="p-3 rounded border border-gray-300"
+            className="p-3 rounded border border-gray-400"
           ></textarea>
           <button
             type="submit"

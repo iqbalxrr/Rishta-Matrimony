@@ -29,6 +29,8 @@ import SuccessStories from "../Pages/DashBoard/Admin/SuccessStories";
 import BiodataDetails from "../Components/BiodataDetails";
 import CheckoutPage from "../Pages/CheckoutPage";
 import PrivateAdmin from "./PrivateAdmin";
+import Contact from "../Pages/Contact";
+import AboutPage from "../Pages/AboutPage";
 
 
 
@@ -62,7 +64,16 @@ export const router = createBrowserRouter([
       {
         path:"/checkout/:bioId",
         Component:CheckoutPage
+      },
+      {
+        path:"/contact",
+        Component:Contact
+      },
+      {
+        path:"/about",
+        Component:AboutPage
       }
+
     ],
   },
 

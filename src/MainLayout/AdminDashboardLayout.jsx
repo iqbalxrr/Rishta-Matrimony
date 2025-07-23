@@ -140,9 +140,9 @@ const AdminDashboardLayout = () => {
               <FaChevronRight className="mt-2" />
               <NavLink to="/about">About</NavLink>
               <FaChevronRight className="mt-2" />
-              <NavLink to="/contac">Contact</NavLink>
+              <NavLink to="/contact">Contact</NavLink>
             </div>
-            <img src={biodata?.profileImage || user?.photoURL} alt="User" className="w-10 h-10 rounded-full" />
+            <img src={biodata?.profileImage || user?.photoURL} alt="User" className="w-10 h-10 border-2 border-amber-400  rounded-full" />
           </div>
           <Outlet />
         </main>

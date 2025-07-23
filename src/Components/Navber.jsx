@@ -8,7 +8,7 @@ const Navbar = () => {
 
   const toggleDrawer = () => setIsOpen(!isOpen);
 
-  const { user, biodata , authUser } = useContext(AuthContext)
+  const { user, biodata, authUser } = useContext(AuthContext)
 
   const handleLinkClick = () => {
     if (isOpen) {
@@ -50,7 +50,18 @@ const Navbar = () => {
         )
       }
       {user ? (
-        <img src={user?.photoURL} alt="" className={`w-10 h-10  rounded-full ${isOpen ? 'hidden' : 'flex'}`} />
+        <div className="relative group">
+          <img
+            src={biodata?.profileImage || user?.photoURL}
+            alt="Profile"
+            className={`w-10 h-10 border-2 border-amber-400 rounded-full cursor-pointer ${isOpen ? 'hidden' : 'flex'}`}
+          />
+          {/* Tooltip */}
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-3 py-1 bg-[#db5aa6] text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap text-center">
+            <div>{biodata?.name || user?.displayName}</div>
+            <div className="text-xs text-gray-300">BioID: {biodata?.bioId || user?.email}</div>
+          </div>
+        </div>
       ) : (
         <Link
           to="/loginpage"
@@ -62,6 +73,7 @@ const Navbar = () => {
 
     </>
   );
+
 
   return (
     <>

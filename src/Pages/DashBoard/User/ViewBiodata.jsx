@@ -13,7 +13,6 @@ const ViewBiodata = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSending, setIsSending] = useState(false); 
 
-  // ✅ Handle premium request using SweetAlert
   const handlePremiumRequest = async (email) => {
 
     console.log(email)
@@ -42,6 +41,8 @@ const ViewBiodata = () => {
 
   if (isLoading) return <Loader></Loader>
   if (isError || !biodata) return <p className="text-center py-10 text-red-500">Biodata not found.</p>;
+
+  console.log(biodata?.profileImage)
 
   return (
     <div className="lg:px-12 py-8">

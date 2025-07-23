@@ -16,7 +16,7 @@ import Swal from "sweetalert2";
 
 const UserDashboardLayout = () => {
 
-  const { user ,  LogOut  } = useContext(AuthContext);
+  const { user ,  LogOut  , biodata } = useContext(AuthContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = () => setDrawerOpen(!drawerOpen);
@@ -139,9 +139,9 @@ const UserDashboardLayout = () => {
               <FaChevronRight className="mt-2" />
               <NavLink to="/about">About</NavLink>
               <FaChevronRight className="mt-2" />
-              <NavLink to="/contac">Contact</NavLink>
+              <NavLink to="/contact">Contact</NavLink>
             </div>
-            <img src={user?.photoURL} alt="" className="w-10 h-10 rounded-full" />
+            <img src={biodata?.profileImage || user?.photoURL} alt="" className="w-10 h-10 border-2 border-amber-400  rounded-full" />
           </div>
           <Outlet />
         </main>

@@ -4,27 +4,13 @@ import Slider from "react-slick";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useDashboardStats } from "../Utils/Utils";
 
 const RecentCouplesSlider = () => {
-  const couples = [
-    {
-      id: 1,
-      image: "img1.png",
-    },
-    {
-      id: 2,
-      image: "img2.png",
-    },
-    {
-      id: 3,
-      image: "img3.png",
-    },
-    {
-      id: 4,
-      image: "img4.png",
-    },
-  ];
 
+const {successStories} = useDashboardStats();
+
+  
   const NextArrow = (props) => (
     <div
       className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-black bg-opacity-50 rounded-full p-2 cursor-pointer text-white"
@@ -72,11 +58,11 @@ const RecentCouplesSlider = () => {
       <img src="/flower.png" alt="" className="w-50 mx-auto mb-16" />
       <div className="relative px-4 ">
         <Slider {...settings}>
-          {couples.map((couple) => (
+          {successStories.map((couple) => (
             <div key={couple.id} className="px-2">
               <img
-                src={couple.image}
-                alt={`Couple ${couple.id}`}
+                src={couple.coupleImage}
+                alt={`Couple ${couple._id}`}
                 className="w-full h-[550px] object-cover rounded-lg shadow-md"
               />
             </div>

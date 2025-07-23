@@ -29,9 +29,9 @@ const BiodataDetails = () => {
     const data = { name, presentDivision, occupation, bioId , Authemail };
 
     try {
-      const res = await axiosInstance.post("/addfevorites", data);
+       await axiosInstance.post("/addfevorites", data);
 
-      console.log(res)
+      // console.log(res)
       Swal.fire({
         icon: 'success',
         title: 'Added!',
@@ -178,7 +178,7 @@ const BiodataDetails = () => {
             >
               <FaHeart /> Add to Favourites
             </button>
-            {user.role !== "premium" && (
+            { !authUser.isPremium  && (
               <Link
                 to={`/checkout/${biodata.bioId}`}
                 className=""

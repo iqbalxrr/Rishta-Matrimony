@@ -19,8 +19,7 @@ import {
   FaCrown,
   FaDollarSign,
 } from "react-icons/fa";
-import { useQuery } from "@tanstack/react-query";
-import axiosInstance from "../../../Axios Instance/axios";
+import { useDashboardStats } from "../../../Utils/Utils";
 
 
 const COLORS = {
@@ -31,90 +30,62 @@ const COLORS = {
 };
 
 const AdminDashboardHome = () => {
-  // Queries
-  const { data: biodatas = [] } = useQuery({
-    queryKey: ["biodatas"],
-    queryFn: async () => {
-      const res = await axiosInstance.get("/biodatas");
-      return res.data;
-    },
-  });
+  const { stats, loading } = useDashboardStats();
 
-  const { data: premiumMembers = [] } = useQuery({
-    queryKey: ["premiumMembers"],
-    queryFn: async () => {
-      const res = await axiosInstance.get("/all-premium-members");
-      return res.data;
-    },
-  });
+  if (loading) {
+    return <div className="text-center py-10 text-gray-600">Loading...</div>;
+  }
 
-  const { data: contactRequests = [] } = useQuery({
-    queryKey: ["contactRequests"],
-    queryFn: async () => {
-      const res = await axiosInstance.get("/all-contact-request");
-      return res.data;
-    },
-  });
-
-  // Stats Calculation
-  const totalBiodata = biodatas.length;
-  const maleBiodata = biodatas.filter((b) => b.biodataType === "Male").length;
-  const femaleBiodata = biodatas.filter((b) => b.biodataType === "Female").length;
-  const premiumBiodata = premiumMembers.length;
-  const totalRevenue = contactRequests.length * 5;
-
-  // Chart Data
   const pieData = [
-    { name: "Male", value: maleBiodata, color: COLORS.male },
-    { name: "Female", value: femaleBiodata, color: COLORS.female },
-    { name: "Premium", value: premiumBiodata, color: COLORS.premium },
+    { name: "Male", value: stats.maleBiodata, color: COLORS.male },
+    { name: "Female", value: stats.femaleBiodata, color: COLORS.female },
+    { name: "Premium", value: stats.premiumBiodata, color: COLORS.premium },
   ];
 
   const revenueBarData = [
     {
       name: "Revenue",
-      value: totalRevenue,
+      value: stats.totalRevenue,
     },
   ];
 
   const summaryCards = [
     {
       title: "Total Biodata",
-      value: totalBiodata,
+      value: stats.totalBiodata,
       icon: <FaUserAlt className="text-blue-500 text-2xl" />,
       color: "bg-blue-50",
     },
     {
       title: "Male Biodata",
-      value: maleBiodata,
+      value: stats.maleBiodata,
       icon: <FaMale className="text-indigo-500 text-2xl" />,
       color: "bg-indigo-50",
     },
     {
       title: "Female Biodata",
-      value: femaleBiodata,
+      value: stats.femaleBiodata,
       icon: <FaFemale className="text-pink-500 text-2xl" />,
       color: "bg-pink-50",
     },
     {
       title: "Premium Biodata",
-      value: premiumBiodata,
+      value: stats.premiumBiodata,
       icon: <FaCrown className="text-yellow-500 text-2xl" />,
       color: "bg-yellow-50",
     },
     {
       title: "Total Revenue ($)",
-      value: `$${totalRevenue.toLocaleString()}`,
+      value: `$${stats.totalRevenue.toLocaleString()}`,
       icon: <FaDollarSign className="text-green-500 text-2xl" />,
       color: "bg-green-50",
     },
   ];
 
   return (
-    <div className="min-h-screen  py-8">
+    <div className="min-h-screen py-8">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard</h1>
 
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">
         {summaryCards.map((card, idx) => (
           <div
@@ -130,10 +101,9 @@ const AdminDashboardHome = () => {
         ))}
       </div>
 
-      {/* Chart Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Pie Chart */}
-        <div className="bg-white rounded-2xl shadow-md ">
+        <div className="bg-white rounded-2xl shadow-md">
           <h2 className="text-lg font-semibold text-center text-gray-800 mb-4">
             Biodata Distribution
           </h2>

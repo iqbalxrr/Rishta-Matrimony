@@ -154,7 +154,8 @@ const AuthProvider = ({ children }) => {
       enabled: !!user?.email,
     });
 
-  console.log(biodata)
+  // console.log(biodata)
+  // console.log(biodata?.profileImage)
 
   if(authUser.isPremium){
     axiosInstance.post("all-premium-members" , biodata )
