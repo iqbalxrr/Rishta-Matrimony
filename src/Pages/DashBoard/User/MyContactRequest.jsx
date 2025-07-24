@@ -1,15 +1,11 @@
 import React, { useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
-
 import Swal from 'sweetalert2';
 import axiosInstance from '../../../Axios Instance/axios';
 import { AuthContext } from '../../../Contex/AuthProvider';
 
 const MyContactRequest = () => {
-
-  const { biodata } = useContext(AuthContext)
-
-  // console.log(biodata.bioId)
+  const { biodata } = useContext(AuthContext);
 
   const { data: requests = [], isLoading, refetch } = useQuery({
     queryKey: ['allContactRequests', biodata?.bioId],
@@ -19,8 +15,6 @@ const MyContactRequest = () => {
       return res.data;
     },
   });
-
-  console.log(requests)
 
   const handleDelete = (id) => {
     Swal.fire({
@@ -44,63 +38,100 @@ const MyContactRequest = () => {
     });
   };
 
-
   return (
-    <div className="px-4 md:px-6 py-10">
-      <h2 className="text-2xl font-bold text-center subtitle-font mb-6">My Contact Requests</h2>
+    <div className="px-2 lg:px-8 py-6">
+      <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">
+        My Contact Requests
+      </h2>
 
-      <div className="">
-        <table className="min-w-full bg-white border border-gray-200 shadow-md rounded-lg overflow-x-scroll">
-          <thead className="bg-gradient-to-r from-rose-100 to-pink-100 text-gray-700 text-sm md:text-base uppercase tracking-wide">
-            <tr>
-              <th className="text-left px-4 py-3 border-b">Name</th>
-              <th className="text-left px-4 py-3 border-b">Biodata ID</th>
-              <th className="text-left px-4 py-3 border-b">Status</th>
-              <th className="text-left px-4 py-3 border-b">Mobile</th>
-              <th className="text-left px-4 py-3 border-b">Email</th>
-              <th className="text-center px-4 py-3 border-b">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading ? (
-              <tr>
-                <td colSpan="6" className="text-center py-6">Loading...</td>
-              </tr>
-            ) : requests.length === 0 ? (
-              <tr>
-                <td colSpan="6" className="text-center py-6 text-gray-500">No contact requests found.</td>
-              </tr>
-            ) : (
-              requests.map((req, index) => (
-                <tr
-                  key={req._id}
-                  className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50 hover:bg-gray-100'}
-                >
-                  <td className="px-4 py-3 border-b">{req.requestName || 'N/A'}</td>
-                  <td className="px-4 py-3 border-b">{req.requestBioId}</td>
-                  <td className="px-4 py-3 border-b">
-                    {req.status === 'approved' ? (
-                      <span className="inline-block px-2 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">Approved</span>
-                    ) : (
-                      <span className="inline-block px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-700 rounded-full">Pending</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 border-b">{req.status === 'approved' ? req.requestMobile : 'N/A'}</td>
-                  <td className="px-4 py-3 border-b">{req.status === 'approved' ? req.requestEmail : 'N/A'}</td>
-                  <td className="px-4 py-3 text-center border-b">
-                    <button
-                      onClick={() => handleDelete(req._id)}
-                      className="bg-red-500 hover:bg-red-600 text-white text-xs px-4 py-2 rounded-md transition"
-                    >
-                      Delete
-                    </button>
-                  </td>
+      {isLoading ? (
+        <p className="text-center text-gray-500">Loading...</p>
+      ) : requests.length === 0 ? (
+        <div className="text-gray-500 mt-10 text-center">No contact requests found.</div>
+      ) : (
+        <>
+          {/* Table for md and up */}
+          <div className="hidden md:block overflow-x-auto bg-white shadow rounded-lg">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-green-600 text-white">
+                <tr className="text-center">
+                  <th className="px-2 py-3 text-sm font-semibold">Name</th>
+                  <th className="px-2 py-3 text-sm font-semibold">Biodata ID</th>
+                  <th className="px-2 py-3 text-sm font-semibold">Status</th>
+                  <th className="px-2 py-3 text-sm font-semibold">Mobile</th>
+                  <th className="px-2 py-3 text-sm font-semibold">Email</th>
+                  <th className="px-2 py-3 text-sm font-semibold">Action</th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              </thead>
+              <tbody className="divide-y text-center divide-gray-200">
+                {requests.map((req) => (
+                  <tr key={req._id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-2 py-5 text-sm">{req.requestName || 'N/A'}</td>
+                    <td className="px-2 py-5 text-sm">{req.requestBioId}</td>
+                    <td className="px-2 py-5 text-sm">
+                      {req.status === 'approved' ? (
+                        <span className="text-green-600 font-medium">Approved</span>
+                      ) : (
+                        <span className="text-yellow-600 font-medium">Pending</span>
+                      )}
+                    </td>
+                    <td className="px-2 py-5 text-sm">
+                      {req.status === 'approved' ? req.requestMobile : 'N/A'}
+                    </td>
+                    <td className="px-2 py-5 text-sm break-all">
+                      {req.status === 'approved' ? req.requestEmail : 'N/A'}
+                    </td>
+                    <td className="px-2 py-5 text-sm">
+                      <button
+                        onClick={() => handleDelete(req._id)}
+                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Card layout for small devices */}
+          <div className="md:hidden space-y-4">
+            {requests.map((req) => (
+              <div key={req._id} className="bg-white shadow rounded-lg p-4">
+                <p className="text-sm">
+                  <span className="font-semibold">Name:</span> {req.requestName || 'N/A'}
+                </p>
+                <p className="text-sm">
+                  <span className="font-semibold">Biodata ID:</span> {req.requestBioId}
+                </p>
+                <p className="text-sm">
+                  <span className="font-semibold">Status:</span>{" "}
+                  {req.status === 'approved' ? (
+                    <span className="text-green-600 font-medium">Approved</span>
+                  ) : (
+                    <span className="text-yellow-600 font-medium">Pending</span>
+                  )}
+                </p>
+                <p className="text-sm">
+                  <span className="font-semibold">Mobile:</span>{" "}
+                  {req.status === 'approved' ? req.requestMobile : 'N/A'}
+                </p>
+                <p className="text-sm mb-2">
+                  <span className="font-semibold">Email:</span>{" "}
+                  {req.status === 'approved' ? req.requestEmail : 'N/A'}
+                </p>
+                <button
+                  onClick={() => handleDelete(req._id)}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm"
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };

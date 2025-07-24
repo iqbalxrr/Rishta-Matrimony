@@ -7,7 +7,7 @@ import Loader from './Loader';
 const SuccessStory = () => {
   const { successStories, loading } = useDashboardStats();
 
-  if (loading) return <p className="text-center py-10"><Loader></Loader></p>;
+  if (loading) return <Loader></Loader>;
 
   const sortedStories = [...successStories].sort(
     (a, b) => new Date(b.marriageDate) - new Date(a.marriageDate)

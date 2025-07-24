@@ -129,7 +129,7 @@ const AuthProvider = ({ children }) => {
   return () => unsubscribe();
 }, []);
 
-// manage Authuser data section 
+// manage role Authuser data section 
 
   const { data: authUser = {},  } = useQuery({
     queryKey: ["authUser",user?.email],
@@ -156,10 +156,26 @@ const AuthProvider = ({ children }) => {
 
   // console.log(biodata)
   // console.log(biodata?.profileImage)
+  // console.log(biodata?.email)
 
-  if(authUser.isPremium){
-    axiosInstance.post("all-premium-members" , biodata )
+  useEffect(() => {
+  if (
+    authUser?.isPremium &&
+    biodata?.email 
+    
+  ) {
+    axiosInstance
+      .post("all-premium-members", biodata)
+      .then(() => {
+        // console.log("Premium member posted");
+      })
+      .catch((err) => {
+        if (err.response?.status !== 409) {
+          // console.error("Failed to post premium member:", err);
+        }
+      });
   }
+}, [authUser?.isPremium, biodata]);
 
   // ✅ All values provided to children
   const info = {
@@ -181,7 +197,7 @@ const AuthProvider = ({ children }) => {
     uploadImage,
     uploading,
    
-    // user manage section 
+    // user role manage section 
 
     authUser,
 

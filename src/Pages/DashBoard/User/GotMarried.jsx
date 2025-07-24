@@ -7,7 +7,7 @@ import { AuthContext } from '../../../Contex/AuthProvider';
 import axiosInstance from '../../../Axios Instance/axios';
 
 const GotMarried = () => {
-  const {  uploadImage, biodata } = useContext(AuthContext);
+  const { uploadImage, biodata } = useContext(AuthContext);
   const [uploadingImg, setUploadingImg] = useState(false);
 
   const {
@@ -32,7 +32,7 @@ const GotMarried = () => {
   });
 
   const onSubmit = async (data) => {
-    if (!data.image[0]) {
+    if (!data.image || data.image.length === 0) {
       return Swal.fire('Error', 'Please select an image.', 'error');
     }
 
@@ -42,7 +42,7 @@ const GotMarried = () => {
       const imageUrl = await uploadImage(data.image[0]);
 
       const story = {
-        selfId: parseInt(biodata.bioId),
+        selfId: parseInt(biodata?.bioId),
         partnerId: parseInt(data.partnerId),
         title: data.title,
         coupleImage: imageUrl,
@@ -62,16 +62,18 @@ const GotMarried = () => {
   };
 
   return (
-    <div className="px-4 md:px-6 py-10">
-      <h2 className="text-2xl font-bold text-center subtitle-font mb-8">Submit Your Success Story</h2>
+    <div className="px-4 md:px-6 py-10 ">
+      <h2 className="text-2xl font-bold text-center subtitle-font mb-8">
+        Submit Your Success Story
+      </h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-6 space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-6 space-y-6 rounded shadow">
         {/* Self ID */}
         <div>
           <label className="block font-medium mb-1">Your Biodata ID</label>
           <input
             type="text"
-            value={biodata.bioId}
+            value={biodata?.bioId || ''}
             readOnly
             className="w-full border px-4 py-2 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
           />
@@ -85,7 +87,9 @@ const GotMarried = () => {
             {...register('partnerId', { required: 'Partner ID is required' })}
             className="w-full border px-4 py-2 rounded-md outline-none focus:ring-2 ring-rose-400"
           />
-          {errors.partnerId && <p className="text-red-500 text-sm mt-1">{errors.partnerId.message}</p>}
+          {errors.partnerId && (
+            <p className="text-red-500 text-sm mt-1">{errors.partnerId.message}</p>
+          )}
         </div>
 
         {/* Title */}
@@ -108,7 +112,9 @@ const GotMarried = () => {
             {...register('marriageDate', { required: 'Marriage date is required' })}
             className="w-full border px-4 py-2 rounded-md outline-none focus:ring-2 ring-rose-400"
           />
-          {errors.marriageDate && <p className="text-red-500 text-sm mt-1">{errors.marriageDate.message}</p>}
+          {errors.marriageDate && (
+            <p className="text-red-500 text-sm mt-1">{errors.marriageDate.message}</p>
+          )}
         </div>
 
         {/* Rating */}
@@ -131,7 +137,7 @@ const GotMarried = () => {
             type="file"
             accept="image/*"
             {...register('image', { required: 'Image is required' })}
-            className="w-full border px-4 rounded-md bg-white file:mr-4 file:py-3 file:px-3 file:border file:rounded file:bg-rose-500 file:text-white"
+            className="w-full border px-4 rounded-md bg-white file:mr-4 file:py-3 file:px-3 file:border file:rounded file:bg-rose-500 file:text-white cursor-pointer"
           />
           {errors.image && <p className="text-red-500 text-sm mt-1">{errors.image.message}</p>}
         </div>
@@ -152,14 +158,14 @@ const GotMarried = () => {
         <div className="text-center">
           <button
             type="submit"
-            disabled={uploadingImg || mutation.isPending}
+            disabled={uploadingImg || mutation.isLoading}
             className={`${
-              uploadingImg || mutation.isPending
-                ? 'bg-gray-400'
-                : 'bg-gradient-to-r from-rose-500 to-pink-500'
+              uploadingImg || mutation.isLoading
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-rose-500 to-pink-500 cursor-pointer'
             } text-white px-6 py-2 rounded-md font-medium hover:opacity-90 transition`}
           >
-            {uploadingImg || mutation.isPending ? 'Uploading...' : 'Submit Story'}
+            {uploadingImg || mutation.isLoading ? 'Uploading...' : 'Submit Story'}
           </button>
         </div>
       </form>

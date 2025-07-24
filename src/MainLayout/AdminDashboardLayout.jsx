@@ -55,7 +55,7 @@ const AdminDashboardLayout = () => {
     <div>
       <div className="min-h-screen flex flex-col md:flex-row relative">
         {/* Desktop Sidebar */}
-        <aside className="hidden md:flex md:flex-col w-64 bg-blue-100 p-6 shadow-md">
+        <aside className="hidden md:flex md:flex-col w-60 lg:w-72  p-4 bg-blue-100  shadow-md">
           <h2 className="text-2xl font-bold mb-8 text-blue-600 text-center">
             Admin Dashboard
           </h2>
@@ -133,8 +133,8 @@ const AdminDashboardLayout = () => {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 p-6 bg-white">
-          <div className="flex justify-between border-b-2 pb-4 border-gray-200">
+        <main className="flex-1 p-3 bg-white">
+          <div className="flex justify-between border-b-2 pb-4 border-gray-200 lg:mx-10">
             <div className="flex gap-1.5 md:gap-3 lg:gap-10 items-center *:hover:text-pink-700">
               <NavLink to="/" className="">Home </NavLink>
               <FaChevronRight className="mt-2" />

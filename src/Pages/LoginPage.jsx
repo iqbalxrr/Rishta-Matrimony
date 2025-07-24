@@ -15,7 +15,7 @@ const LoginPage = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
 
-  console.log(from)
+  // console.log(from)
 
   const {
     SigninWithGoogle,
@@ -62,35 +62,48 @@ const LoginPage = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    SigninWithGoogle(provider)
-      .then(async (result) => {
-        const googleUser = result.user;
+  // console.log(authUser?.email)
+const handleGoogleLogin = () => {
+  SigninWithGoogle(provider)
+    .then(async (result) => {
+      const googleUser = result.user;
+
+      try {
+        // 1️⃣ Check user exists in DB
+        const { data: existingUser } = await axiosInstance.get(`/authusers?email=${googleUser.email}`);
+
+        if (!existingUser) {
+          // 2️⃣ If not found, show error and return
+          await Swal.fire({
+            title: 'No account found!',
+            text: 'Please sign up first before logging in with Google.',
+            icon: 'error',
+          });
+        }
+
+        // 3️⃣ If user exists
         setUser(googleUser);
 
-        const userInfo = {
-          name: googleUser.displayName,
-          email: googleUser.email,
-          role: 'user',
-        };
+        Swal.fire({
+          title: 'Signin Successfully!',
+          icon: 'success',
+          draggable: true,
+        });
 
-        try {
-          await axiosInstance.post('/users', userInfo);
-          Swal.fire({
-            title: 'Signup Successfully!',
-            icon: 'success',
-            draggable: true,
-          });
-          navigate(from, { replace: true });
-        } catch (error) {
-          console.error('Failed to save user to DB:', error.message);
-        }
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
-  };
-
+        navigate(from, { replace: true });
+      } catch (error) {
+        // console.error('Please SignUp First:', error.message);
+        Swal.fire({
+          title: 'Please SignUp First!',
+          text: error.message,
+          icon: 'error',
+        });
+      }
+    })
+    .catch((error) => {
+      console.log(error.message);
+    });
+};
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
       <form

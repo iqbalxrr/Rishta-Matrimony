@@ -51,7 +51,7 @@ const UserDashboardLayout = () => {
       <div className="min-h-screen  flex flex-col md:flex-row relative">
 
         {/* Desktop Sidebar */}
-        <aside className="hidden bg-[#FEFBF2] md:flex md:flex-col md:w-62 p-3 shadow-md">
+        <aside className="hidden bg-[#FEFBF2] md:flex md:flex-col  w-60 lg:w-72  p-4 shadow-md">
           <h2 className="text-xl font-bold mb-8 mt-3 text-pink-600 subtitle-font text-center">
             User Dashboard
           </h2>
@@ -132,8 +132,8 @@ const UserDashboardLayout = () => {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 text-xl p-6 items-center bg-white">
-          <div className="flex justify-between items-center border-b-2 pb-4 border-gray-200">
+        <main className="flex-1  p-3 items-center bg-white">
+          <div className="flex justify-between items-center border-b-2 pb-4 lg:mx-10 border-gray-200">
             <div className="flex gap-1.5 md:gap-3 lg:gap-10 *:hover:text-pink-700">
               <NavLink to="/" className="">Home </NavLink>
               <FaChevronRight className="mt-2" />

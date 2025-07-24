@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../Axios Instance/axios";
@@ -63,14 +62,16 @@ const ManageUsers = () => {
   };
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Manage Users</h1>
+    <div className="px-2 lg:px-8 py-6">
+      <h1 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">
+        Manage Users
+      </h1>
 
-      {/* Search & Filter */}
-      <form onSubmit={handleSearch} className="mb-6 flex gap-3 flex-wrap">
+      {/* Search Form */}
+      <form onSubmit={handleSearch} className="mb-6 flex flex-wrap gap-3">
         <input
           type="text"
-          placeholder="Search by username"
+          placeholder="Search by name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="border p-2 rounded w-full max-w-xs"
@@ -78,7 +79,7 @@ const ManageUsers = () => {
         <select
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
-          className="border p-2 rounded"
+          className="border  px-10 rounded"
         >
           <option value="">All Roles</option>
           <option value="user">User</option>
@@ -92,51 +93,53 @@ const ManageUsers = () => {
         </button>
       </form>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full table-auto border-collapse shadow rounded overflow-hidden">
-          <thead className="bg-blue-600 text-white">
-            <tr>
-              <th className="py-3 px-4 text-left">Name</th>
-              <th className="py-3 px-4 text-left">Email</th>
-              <th className="py-3 px-4 text-left">Role</th>
-              <th className="py-3 px-4 text-left">Premium</th>
+      {/* Table for md and up */}
+      <div className="hidden md:block overflow-x-auto bg-white shadow rounded-lg">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-green-600 text-white">
+            <tr className="text-center">
+              <th className="px-2 py-3 text-sm font-semibold">Name</th>
+              <th className="px-2 py-3 text-sm font-semibold">Email</th>
+              <th className="px-2 py-3 text-sm font-semibold">Role</th>
+              <th className="px-2 py-3 text-sm font-semibold">Premium</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y text-center divide-gray-200">
             {isLoading ? (
               <tr>
-                <td colSpan="4" className="text-center py-5">Loading...</td>
+                <td colSpan="4" className="text-center py-5 text-gray-500">
+                  Loading...
+                </td>
               </tr>
             ) : users.length ? (
               users.map((user) => (
-                <tr key={user._id} className="border-b hover:bg-gray-50">
-                  <td className="py-3 px-4">{user.name}</td>
-                  <td className="py-3 px-4">{user.email}</td>
-                  <td className="py-3 px-4">
+                <tr key={user._id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-2 py-3 text-sm">{user.name}</td>
+                  <td className="px-2 py-3 text-sm break-all">{user.email}</td>
+                  <td className="px-2 py-3 text-sm">
                     {user.role === "admin" ? (
-                      <span className="text-green-600 font-semibold">Admin</span>
+                      <span className="text-green-600 font-medium">Admin</span>
                     ) : (
                       <button
                         onClick={() => handleMakeAdmin(user.email)}
-                        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs"
                       >
                         Make Admin
                       </button>
                     )}
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="px-2 py-3 text-sm">
                     {user.premiumRequest ? (
                       <button
                         onClick={() => handleMakePremium(user.email)}
-                        className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-xs"
                       >
                         Make Premium
                       </button>
                     ) : user.isPremium ? (
-                      <span className="text-green-600 font-semibold">Premium</span>
+                      <span className="text-green-600 font-medium">Premium</span>
                     ) : (
-                      <span className="text-gray-400 italic">No request</span>
+                      <span className="text-gray-400 italic text-sm">No request</span>
                     )}
                   </td>
                 </tr>
@@ -150,6 +153,44 @@ const ManageUsers = () => {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Card layout for small devices */}
+      <div className="md:hidden space-y-6">
+        {users.map((user) => (
+          <div key={user._id} className="bg-white shadow rounded-lg space-y-2 p-4">
+            <p className="text-sm "><span className="font-semibold">Name:</span> {user.name}</p>
+            <p className="text-sm"><span className="font-semibold">Email:</span> {user.email}</p>
+            <p className="text-sm">
+              <span className="font-semibold">Role : </span>{" "}
+              {user.role === "admin" ? (
+                <span className="text-green-600 font-medium">Admin</span>
+              ) : (
+                <button
+                  onClick={() => handleMakeAdmin(user.email)}
+                  className="my-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm"
+                >
+                  Make Admin
+                </button>
+              )}
+            </p>
+            <p className="text-sm mb-2">
+              <span className="font-semibold">Premium : </span>{" "}
+              {user.premiumRequest ? (
+                <button
+                  onClick={() => handleMakePremium(user.email)}
+                  className="my-2 bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded text-sm"
+                >
+                  Make Premium
+                </button>
+              ) : user.isPremium ? (
+                <span className="text-green-600 font-medium">Premium</span>
+              ) : (
+                <span className="text-gray-400 italic">No request</span>
+              )}
+            </p>
+          </div>
+        ))}
       </div>
 
       {/* Pagination */}

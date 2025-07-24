@@ -58,10 +58,10 @@ const CheckoutPage = () => {
         // Save contact request to DB
         const contactData = {
           biodataId:bioId,
-          requestBioId:biodata.bioId,
-          requestEmail:biodata.email,
-          requestName:biodata.name,
-          requestMobile:biodata.mobile,
+          requestBioId:biodata?.bioId,
+          requestEmail:biodata?.email,
+          requestName:biodata?.name,
+          requestMobile:biodata?.mobile,
           transactionId: paymentIntent.id,
           status: "pending",
           
