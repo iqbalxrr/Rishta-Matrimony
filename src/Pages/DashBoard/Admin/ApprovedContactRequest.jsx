@@ -8,7 +8,7 @@ import { AuthContext } from "../../../Contex/AuthProvider";
 const ApprovedContactRequest = () => {
   const { biodata } = useContext(AuthContext);
 
-  console.log(biodata.bioId)
+  // console.log(biodata.bioId)
 
   const { data: requests = [], isLoading, refetch } = useQuery({
     queryKey: ['allContactRequests', biodata?.bioId],
@@ -19,7 +19,7 @@ const ApprovedContactRequest = () => {
     },
   });
 
-  console.log(requests)
+  // console.log(requests)
 
   const handleApprove = async (id) => {
     const confirm = await Swal.fire({

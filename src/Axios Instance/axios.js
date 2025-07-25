@@ -1,37 +1,40 @@
-
 import axios from "axios";
 import { getAuth } from "firebase/auth";
 
 const axiosInstance = axios.create({
   baseURL: "http://localhost:3000", 
-  withCredentials: true,          
+  withCredentials: true,
 });
 
-// ✅ Request Interceptor: Firebase Token Add
+// ✅ Request Interceptor: Add Firebase Token
 axiosInstance.interceptors.request.use(
   async (config) => {
-    const auth = getAuth();
-    const user = auth.currentUser;
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
 
-    if (user) {
-      const token = await user.getIdToken(); // Firebase JWT token
-    //   console.log(token)
-      config.headers.Authorization = `Bearer ${token}`;
+      if (user) {
+        const token = await user.getIdToken(); // wait for token
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+
+      return config;
+    } catch (error) {
+      console.error("🔥 Axios token error:", error);
+      return config; // fallback
     }
-
-    return config;
   },
   (error) => {
     return Promise.reject(error);
   }
 );
 
-// ✅ Response Interceptor: Handle 401 errors (Optional)
+// ✅ Response Interceptor (optional)
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      console.warn("🔐 Unauthorized - Firebase token may have expired");
+      console.warn("🔐 Unauthorized - Token might be missing or expired.");
     }
     return Promise.reject(error);
   }

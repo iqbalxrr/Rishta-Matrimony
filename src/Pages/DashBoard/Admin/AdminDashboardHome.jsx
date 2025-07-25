@@ -83,7 +83,7 @@ const AdminDashboardHome = () => {
   ];
 
   return (
-    <div className="min-h-screen py-8">
+    <div className="min-h-screen py-8 lg:px-10">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-12">

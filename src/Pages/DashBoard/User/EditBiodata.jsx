@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 const divisions = ['Dhaka', 'Chattagram', 'Rangpur', 'Barisal', 'Khulna', 'Satkhira', 'Mymensingh', 'Sylhet'];
 
 const EditBiodata = () => {
-  const { uploadImage, uploading, user } = useContext(AuthContext);
+  const { uploadImage, uploading, user , biodata } = useContext(AuthContext);
   const [isEditing, setIsEditing] = useState(false);
 
   const {
@@ -47,35 +47,59 @@ const EditBiodata = () => {
   };
 
   // Submit form data
-  const onSubmit = async (data) => {
-    if (user?.email) data.email = user.email;
+ const onSubmit = async (data) => {
+  if (user?.email) data.email = user.email;
 
-    try {
-      let res;
-      if (isEditing) {
-        res = await axiosInstance.patch(`/update-biodata/${user.email}`, data);
-      } else {
-        res = await axiosInstance.post('/add-biodata', data);
-      }
+  const updateName = { name: data.name };
 
-      if (res.status === 200 || res.status === 201) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success!',
-          text: isEditing ? 'Biodata updated successfully.' : 'Biodata submitted successfully.',
-          confirmButtonColor: '#3085d6',
-          confirmButtonText: 'OK',
-        });
+  try {
+    let res;
+    if (isEditing) {
+      // Update biodata
+      res = await axiosInstance.patch(`/update-biodata/${user.email}`, data);
+    
+      if(biodata){
+             // Update name in users collection
+      await axiosInstance.patch(`/update-user-name/${user.email}`, updateName);
+
+      // Update name in contactRequests collection
+      await axiosInstance.patch(`/update-contact-request-name/${user.email}`, updateName);
       }
-    } catch (error) {
-      const message = error.response?.data?.message || error.message;
+   
+    } else {
+      // Add new biodata
+      res = await axiosInstance.post('/add-biodata', data);
+
+
+      if(biodata){
+             // Update name in users collection
+      await axiosInstance.patch(`/update-user-name/${user.email}`, updateName);
+
+      // Update name in contactRequests collection
+      await axiosInstance.patch(`/update-contact-request-name/${user.email}`, updateName);
+      }
+    }
+
+    if (res.status === 200 || res.status === 201) {
       Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: message,
+        icon: 'success',
+        title: 'Success!',
+        text: isEditing ? 'Biodata updated successfully.' : 'Biodata submitted successfully.',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK',
       });
     }
-  };
+  } catch (error) {
+    const message = error.response?.data?.message || error.message;
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: message,
+    });
+  }
+};
+
+
 
   return (
     <div className="px-4 sm:px-6 md:px-8 py-10 ">

@@ -60,7 +60,11 @@ const Navbar = () => {
           {/* Tooltip */}
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-3 py-1 bg-[#db5aa6] text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap text-center">
             <div>{biodata?.name || user?.displayName}</div>
-            <div className="text-xs text-gray-300">BioID: {biodata?.bioId || user?.email}</div>
+            <div className="text-xs text-gray-300">{
+              authUser?.role === "admin"
+                ? "admin"
+                : (biodata?.bioId || user?.email)
+            }</div>
           </div>
         </div>
       ) : (
@@ -128,7 +132,13 @@ const Navbar = () => {
                     alt="" className="w-10 h-10 rounded-full border-2 border-[#66451C]" />
                   <div className="flex flex-col gap-1 primary-color">
                     <h1 className="text-[12px] overflow-hidden">{biodata?.name || user?.displayName}</h1>
-                    <h1 className="text-[12px] overflow-hidden uppercase"> BioID : {biodata?.bioId || user?.email}</h1>
+                    <h1 className="text-[12px] overflow-hidden uppercase">
+                      {
+                        authUser?.role === "admin"
+                          ? "admin"
+                          : (biodata?.bioId || user?.email)
+                      }
+                    </h1>
                   </div>
                 </div>
 
