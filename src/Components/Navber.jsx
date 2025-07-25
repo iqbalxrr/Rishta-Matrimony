@@ -25,6 +25,7 @@ const Navbar = () => {
       <NavLink to="/about" onClick={handleLinkClick} className="block  py-2 hover:text-blue-500">About</NavLink>
       <NavLink to="/biodataspage" onClick={handleLinkClick} className="block  py-2 hover:text-blue-500">Biodatas</NavLink>
       <NavLink to="/contact" onClick={handleLinkClick} className="block py-2 hover:text-blue-500">Contact</NavLink>
+      <NavLink to="/blog" onClick={handleLinkClick} className="block py-2 hover:text-blue-500">Blog</NavLink>
 
       {
         user && authUser?.role !== "admin" && (
@@ -45,7 +46,7 @@ const Navbar = () => {
             onClick={handleLinkClick}
             className="block py-2 hover:text-blue-500"
           >
-            Admin Dashboard
+            Dashboard
           </NavLink>
         )
       }

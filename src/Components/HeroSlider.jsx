@@ -3,6 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-fade";
+import { Link } from "react-router";
 
 
 
@@ -81,9 +82,12 @@ const HeroSlider = () => {
                             <option>Chattogram</option>
                             <option>Khulna</option>
                         </select>
-                        <button className="bg-rose-600 hover:bg-rose-700 py-2  text-white font-semibold rounded w-full">
+                        <Link to="/biodataspage">
+                         <button className="bg-rose-600 hover:bg-rose-700 py-2  text-white font-semibold rounded w-full">
                             Search
                         </button>
+                        </Link>
+                       
                     </form>
                 </div>
             </div>

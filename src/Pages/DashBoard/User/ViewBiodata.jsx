@@ -50,10 +50,10 @@ const ViewBiodata = () => {
           <img
             src={biodata?.profileImage || user?.photoURL || '/default-avatar.png'}
             alt="Profile"
-            className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-[#FFBD0F] shadow-md mx-auto"
+            className="w-32 lg:ml-10 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-[#FFBD0E] shadow-md mx-auto"
           />
           <div className="absolute -bottom-2 right-0 bg-rose-600 text-white text-xs px-3 py-1 rounded-full shadow">
-            #{biodata?.bioId || 'BD-ID'}
+            ID : {biodata?.bioId || 'BD-ID'}
           </div>
         </div>
 

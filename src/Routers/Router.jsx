@@ -31,6 +31,8 @@ import CheckoutPage from "../Pages/CheckoutPage";
 import PrivateAdmin from "./PrivateAdmin";
 import Contact from "../Pages/Contact";
 import AboutPage from "../Pages/AboutPage";
+import SuccessStoryBlog from "../Components/SuccessStoryBlog";
+import SuccessStoryDetails from "../Components/SuccessStoryDetails";
 
 
 
@@ -62,16 +64,24 @@ export const router = createBrowserRouter([
         element: <PrivateRoute><BiodataDetails></BiodataDetails></PrivateRoute>
       },
       {
-        path:"/checkout/:bioId",
-        Component:CheckoutPage
+        path: "/checkout/:bioId",
+        Component: CheckoutPage
       },
       {
-        path:"/contact",
-        Component:Contact
+        path: "/contact",
+        Component: Contact
       },
       {
-        path:"/about",
-        Component:AboutPage
+        path: "/about",
+        Component: AboutPage
+      },
+      {
+        path: "/blog",
+        Component: SuccessStoryBlog
+      },
+      {
+        path: "/success-story/:storyId",
+        Component: SuccessStoryDetails
       }
 
     ],
@@ -83,20 +93,20 @@ export const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <UserDashboardLayout />
-       
+
       </PrivateRoute>
     ),
     children: [
-      { 
+      {
         path: "/userDashboard",
-        index:true,
+        index: true,
         element: <ViewBiodata />,
       },
       {
         path: "editbio",
         element: <EditBiodata />,
       },
-    
+
       {
         path: "myContactRequest",
         element: <MyContactRequest />,
@@ -116,10 +126,10 @@ export const router = createBrowserRouter([
   {
     path: "/adminDashboard",
     element: (
-      
-        <PrivateAdmin>
-          <AdminDashboardLayout />
-        </PrivateAdmin>
+
+      <PrivateAdmin>
+        <AdminDashboardLayout />
+      </PrivateAdmin>
     ),
     children: [
       {
@@ -140,7 +150,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "successStories",
-        element: <SuccessStories/>,
+        element: <SuccessStories />,
       },
     ],
   },

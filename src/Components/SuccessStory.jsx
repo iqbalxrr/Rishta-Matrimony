@@ -2,6 +2,7 @@ import React from 'react';
 import { FaStar } from 'react-icons/fa';
 import { useDashboardStats } from '../Utils/Utils';
 import Loader from './Loader';
+import { Link } from 'react-router';
 
 
 const SuccessStory = () => {
@@ -24,7 +25,7 @@ const SuccessStory = () => {
       <img src="/flower.png" alt="decoration" className="w-52 mx-auto mb-16 mt-4" />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        {sortedStories.slice(0 , 3).map((story) => (
+        {sortedStories.slice(0, 3).map((story) => (
           <div
             key={story._id}
             className="overflow-hidden transition duration-300"
@@ -49,9 +50,11 @@ const SuccessStory = () => {
               <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
                 {story.story}
               </p>
-              <button className="bg-black text-white text-xs px-4 py-2 uppercase font-semibold tracking-wide hover:bg-gray-800">
-                Read More
-              </button>
+              <Link to={`/success-story/${story._id}`}>
+                <button className="bg-black text-white text-xs px-4 py-2 uppercase font-semibold tracking-wide hover:bg-gray-800"
+                >Read More</button>
+              </Link>
+              
             </div>
           </div>
         ))}

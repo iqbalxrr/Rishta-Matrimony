@@ -167,7 +167,7 @@ const BiodataDetails = () => {
             <p><strong>Date of Birth:</strong> {biodata.dob}</p>
             <p><strong>Weight:</strong> {biodata.weight}kg</p>
             <p><strong>Permanent Division:</strong> {biodata.permanentDivision}</p>
-            <p><strong>Bio ID:</strong> #{biodata.bioId}</p>
+            <p><strong >Bio ID:</strong> #{biodata.bioId}</p>
           </div>
 
           {/* Action Buttons */}
