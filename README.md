@@ -6,8 +6,8 @@ Welcome to **Rishta Matrimony**, a fully responsive MERN stack-based matchmaking
 
 ## 🔐 Admin Credentials
 
-- **Email**: `admin@gmail.com`  
-- **Password**: `123456`  
+- **Email**: `iamekbal75@gmail.com`  
+- **Password**: `12Abc@#`  
 
 > ⚠️ These credentials are for assignment testing/demo purposes only.
 

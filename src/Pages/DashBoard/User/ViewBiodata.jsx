@@ -7,7 +7,7 @@ import Loader from '../../../Components/Loader';
 import { FaUser, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 
 const ViewBiodata = () => {
-  const { user, biodata, isError, isLoading, authUser } = useContext(AuthContext);
+  const { user, biodata, isError, isLoading, authUser , refetchAuthUser } = useContext(AuthContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
@@ -27,6 +27,9 @@ const ViewBiodata = () => {
         await axiosInstance.patch(`/biodata/request-premium/${email}`, {
           bioId: biodata.bioId,
         });
+
+       await refetchAuthUser()
+
         Swal.fire('Sent!', 'Your request has been sent to the admin.', 'success');
         setIsModalOpen(false);
       } catch (err) {

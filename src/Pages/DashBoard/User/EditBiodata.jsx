@@ -3,12 +3,16 @@ import { useForm } from 'react-hook-form';
 import { AuthContext } from '../../../Contex/AuthProvider';
 import axiosInstance from '../../../Axios Instance/axios';
 import Swal from 'sweetalert2';
+import { useDashboardStats } from '../../../Utils/Utils';
 
 const divisions = ['Dhaka', 'Chattagram', 'Rangpur', 'Barisal', 'Khulna', 'Satkhira', 'Mymensingh', 'Sylhet'];
 
 const EditBiodata = () => {
-  const { uploadImage, uploading, user , biodata } = useContext(AuthContext);
+  const { uploadImage, uploading, user , biodata , refetchBiodata } = useContext(AuthContext);
+  const {contactRequests} = useDashboardStats();
   const [isEditing, setIsEditing] = useState(false);
+
+  // console.log(contactRequests)
 
   const {
     register,
@@ -46,39 +50,34 @@ const EditBiodata = () => {
     if (url) setValue('profileImage', url);
   };
 
-  // Submit form data
- const onSubmit = async (data) => {
+ // Submit form data
+const onSubmit = async (data) => {
   if (user?.email) data.email = user.email;
-
   const updateName = { name: data.name };
 
   try {
     let res;
     if (isEditing) {
-      // Update biodata
       res = await axiosInstance.patch(`/update-biodata/${user.email}`, data);
-    
-      if(biodata){
-             // Update name in users collection
-      await axiosInstance.patch(`/update-user-name/${user.email}`, updateName);
-
-      // Update name in contactRequests collection
-      await axiosInstance.patch(`/update-contact-request-name/${user.email}`, updateName);
-      }
-   
     } else {
-      // Add new biodata
       res = await axiosInstance.post('/add-biodata', data);
+    }
 
-
-      if(biodata){
-             // Update name in users collection
+    if (biodata) {
+      // ✅ Always update user name
       await axiosInstance.patch(`/update-user-name/${user.email}`, updateName);
 
-      // Update name in contactRequests collection
-      await axiosInstance.patch(`/update-contact-request-name/${user.email}`, updateName);
+      // ✅ Only update contactRequest name if matching email exists
+      const hasRequest = contactRequests.some(
+        (req) => req.requestEmail === user.email
+      );
+
+      if (hasRequest) {
+        await axiosInstance.patch(`/update-contact-request-name/${user.email}`, updateName);
       }
     }
+
+   await refetchBiodata();
 
     if (res.status === 200 || res.status === 201) {
       Swal.fire({
@@ -98,6 +97,7 @@ const EditBiodata = () => {
     });
   }
 };
+
 
 
 

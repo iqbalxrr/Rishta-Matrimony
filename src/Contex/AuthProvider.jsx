@@ -131,21 +131,21 @@ const AuthProvider = ({ children }) => {
 
 // manage role Authuser data section 
 
-  const { data: authUser = {},  } = useQuery({
-    queryKey: ["authUser",user?.email],
-    enabled: !! user?.email,
-    queryFn: async () => {
-      const res = await axiosInstance.get(`/authusers?email=${user?.email}`);
-      return res.data;
-    },
-  });
+  const { data: authUser = {}, refetch: refetchAuthUser } = useQuery({
+  queryKey: ["authUser", user?.email],
+  enabled: !!user?.email,
+  queryFn: async () => {
+    const res = await axiosInstance.get(`/authusers?email=${user?.email}`);
+    return res.data;
+  },
+});
 
   // console.log(authUser)
 
   // my biodata section 
   
   // ✅ Fetch biodata using email
-    const { data: biodata ,isLoading , isError } = useQuery({
+    const { data: biodata ,isLoading , isError , refetch: refetchBiodata, } = useQuery({
       queryKey: ['biodata', user?.email],
       queryFn: async () => {
         const res = await axiosInstance.get(`/biodata?email=${user?.email}`);
@@ -200,12 +200,14 @@ const AuthProvider = ({ children }) => {
     // user role manage section 
 
     authUser,
+    refetchAuthUser,
 
     //my biodata value 
 
     biodata ,
     isLoading,
-    isError
+    isError,
+    refetchBiodata
 
   };
 
