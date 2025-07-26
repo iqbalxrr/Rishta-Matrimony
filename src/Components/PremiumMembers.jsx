@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import MemberCard from "./MemberCard";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../Axios Instance/axios";
+import Loader from "./Loader";
 
 const PremiumMembers = () => {
   const [sortOrder, setSortOrder] = useState("asc");
@@ -22,8 +23,8 @@ const PremiumMembers = () => {
     );
   }, [members, sortOrder]);
 
-  if (isLoading) return <p>Loading premium members...</p>;
-  if (isError) return <p>Failed to load premium members.</p>;
+  if (isLoading) return <Loader/>;
+  if (isError) return <p className="text-center mt-10 text-red-600">Failed to load premium members.</p>;
 
   return (
     <section className="py-20">

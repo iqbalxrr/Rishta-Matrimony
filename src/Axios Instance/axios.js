@@ -2,7 +2,7 @@ import axios from "axios";
 import { getAuth } from "firebase/auth";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000", 
+  baseURL: "https://rishta-server-a12.vercel.app/", 
   withCredentials: true,
 });
 

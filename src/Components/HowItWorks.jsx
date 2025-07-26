@@ -47,13 +47,13 @@ const HowItWorks = () => {
       duration: 800,
       offset: 100,
       easing: "ease-in-out",
-      delay: 500,
+      delay: 300,
       once: true,
     });
   }, []);
 
   return (
-    <div className="py-16">
+    <div className="py-16  overflow-x-hidden">
       <h4
         data-aos="fade-down"
         className="text-lg text-[#b98c5e] tracking-widest subtitle-font font-semibold text-center"
@@ -80,7 +80,7 @@ const HowItWorks = () => {
           <div
             key={index}
             data-aos={step.position === "right" ? "fade-left" : "fade-right"}
-            className={`mb-10 flex items-center justify-between w-full ${
+            className={`mb-10 flex items-center justify-between w-full  overflow-hidden ${
               step.position === "right" ? "flex-row-reverse" : ""
             }`}
           >

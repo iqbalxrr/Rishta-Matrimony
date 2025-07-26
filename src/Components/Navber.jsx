@@ -83,8 +83,8 @@ const Navbar = () => {
   return (
     <>
       {/* Navbar */}
-      <nav className="bg-[#FEFBF1] shadow-md fixed  w-full z-50">
-        <div className="max-w-screen-xl mx-auto px-4 py-2 flex justify-between items-center poppins ">
+      <nav className="bg-[#FEFBF1] shadow-md fixed  w-full z-50 ">
+        <div className="max-w-screen-xl mx-auto px-4 py-2 flex justify-between items-center poppins  ">
           {/* Logo */}
           <a href="/" className="flex items-center space-x-2">
             <img src="/logo.png" className="w-25" alt="Logo" />

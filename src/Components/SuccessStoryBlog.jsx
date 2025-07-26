@@ -2,8 +2,9 @@
 import React from 'react';
 import { FaStar } from 'react-icons/fa';
 import { useDashboardStats } from '../Utils/Utils';
-import Loader from './Loader';
+
 import { Link } from 'react-router';
+import Loader from './Loader2';
 
 const SuccessStoryBlog = () => {
     const { successStories, loading } = useDashboardStats();
@@ -15,8 +16,8 @@ const SuccessStoryBlog = () => {
     );
 
     return (
-        <section className="bg-gray-50 py-32 px-4 lg:px-8">
-            <div className="max-w-7xl mx-auto">
+        <section className=" max-w-screen-xl  mx-auto min-h-screen   py-32 px-4 ">
+            <div className="">
                 <div className="text-center mb-12">
                     <h4 className="text-[#b98c5e] text-sm font-bold uppercase tracking-wide mb-2">Success Stories</h4>
                     <h2 className="text-4xl font-extrabold text-gray-800 subtitle-font font-serif">Real Love Stories</h2>

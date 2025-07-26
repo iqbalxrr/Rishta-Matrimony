@@ -3,7 +3,7 @@ import React from "react";
 import { Link, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../Axios Instance/axios";
-import Loader from "./Loader";
+import Loader from "./Loader2";
 import { FaStar } from "react-icons/fa";
 
 const SuccessStoryDetails = () => {

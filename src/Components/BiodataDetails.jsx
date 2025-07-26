@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FaHeart, FaEnvelope, FaPhone } from "react-icons/fa";
 import axiosInstance from "../Axios Instance/axios";
 import RelatedProfiles from "./RelatedProfiles";
-import Loader from "./Loader";
+import Loader from "./Loader2";
 import Swal from "sweetalert2";
 import { AuthContext } from "../Contex/AuthProvider";
 
