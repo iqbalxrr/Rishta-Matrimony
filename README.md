@@ -1,4 +1,4 @@
-# 💍 Rishta Matrimony (Assignment 12 - Category 14)
+# 💍 Rishta Matrimony 
 
 Welcome to **Rishta Matrimony**, a fully responsive MERN stack-based matchmaking platform. Users can create biodatas, search for potential matches, become premium members, and submit success stories. Admins manage users, premium approvals, and contact requests through a dedicated dashboard.
 
