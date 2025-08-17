@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../Axios Instance/axios";
 
-// Custom arrows
+// Custom arrow components for the slider
 const PrevArrow = (props) => (
   <div
     className="absolute left-[-15px] top-[40%] z-10 bg-[#E0A84A] text-white shadow p-2 rounded-full cursor-pointer"
