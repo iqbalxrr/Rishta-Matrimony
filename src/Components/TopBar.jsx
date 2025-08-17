@@ -16,7 +16,7 @@ const TopBar = () => {
           </span>
         </div>
 
-        {/* Right Side: Social Icons */}
+       
         <div className="flex items-center gap-4">
           <a href="#" className="hover:text-yellow-400 transition-colors duration-200">
             <FaFacebookF />
