@@ -21,7 +21,7 @@ axiosInstance.interceptors.request.use(
       return config;
     } catch (error) {
       console.error("🔥 Axios token error:", error);
-      return config; // fallback
+      return config; 
     }
   },
   (error) => {
