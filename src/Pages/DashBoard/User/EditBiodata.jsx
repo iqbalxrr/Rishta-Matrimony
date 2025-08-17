@@ -8,11 +8,9 @@ import { useDashboardStats } from '../../../Utils/Utils';
 const divisions = ['Dhaka', 'Chattagram', 'Rangpur', 'Barisal', 'Khulna', 'Satkhira', 'Mymensingh', 'Sylhet'];
 
 const EditBiodata = () => {
-  const { uploadImage, uploading, user , biodata , refetchBiodata } = useContext(AuthContext);
-  const {contactRequests} = useDashboardStats();
+  const { uploadImage, uploading, user, biodata, refetchBiodata } = useContext(AuthContext);
+  const { contactRequests } = useDashboardStats();
   const [isEditing, setIsEditing] = useState(false);
-
-  // console.log(contactRequests)
 
   const {
     register,
@@ -21,7 +19,6 @@ const EditBiodata = () => {
     formState: { errors },
   } = useForm();
 
-  // Fetch existing biodata & set default values
   useEffect(() => {
     const fetchBiodata = async () => {
       try {
@@ -43,66 +40,66 @@ const EditBiodata = () => {
     if (user?.email) fetchBiodata();
   }, [user, setValue]);
 
-  // Image upload handler
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
+    if (!file) return;
     const url = await uploadImage(file);
     if (url) setValue('profileImage', url);
   };
 
- // Submit form data
-const onSubmit = async (data) => {
-  if (user?.email) data.email = user.email;
-  const updateName = { name: data.name };
+  const onSubmit = async (data) => {
+    if (!user?.email) return;
 
-  try {
-    let res;
-    if (isEditing) {
-      res = await axiosInstance.patch(`/update-biodata/${user.email}`, data);
-    } else {
-      res = await axiosInstance.post('/add-biodata', data);
-    }
+    data.email = user.email;
+    const updateName = { name: data.name };
 
-    if (biodata) {
-      // ✅ Always update user name
-      await axiosInstance.patch(`/update-user-name/${user.email}`, updateName);
+    try {
+      let res;
 
-      // ✅ Only update contactRequest name if matching email exists
-      const hasRequest = contactRequests.some(
-        (req) => req.requestEmail === user.email
-      );
-
-      if (hasRequest) {
-        await axiosInstance.patch(`/update-contact-request-name/${user.email}`, updateName);
+      if (isEditing) {
+        res = await axiosInstance.patch(`/update-biodata/${user.email}`, data);
+      } else {
+        res = await axiosInstance.post('/add-biodata', data);
+        await axiosInstance.patch(`/update-user-name/${user.email}`, updateName);
       }
-    }
 
-   await refetchBiodata();
+      if (biodata) {
+        await axiosInstance.patch(`/update-user-name/${user.email}`, updateName);
 
-    if (res.status === 200 || res.status === 201) {
+        if (Array.isArray(contactRequests)) {
+          const hasRequest = contactRequests.some(
+            (req) => req.requestEmail === user.email
+          );
+
+          if (hasRequest) {
+            await axiosInstance.patch(`/update-contact-request-name/${user.email}`, updateName);
+          }
+        }
+      }
+
+      await refetchBiodata();
+
+      if ((res?.status === 200 || res?.status === 201) && res?.data?.success !== false) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: isEditing ? 'Biodata updated successfully.' : 'Biodata submitted successfully.',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'OK',
+        });
+      }
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || 'Something went wrong';
       Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: isEditing ? 'Biodata updated successfully.' : 'Biodata submitted successfully.',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'OK',
+        icon: 'error',
+        title: 'Oops...',
+        text: message,
       });
     }
-  } catch (error) {
-    const message = error.response?.data?.message || error.message;
-    Swal.fire({
-      icon: 'error',
-      title: 'Oops...',
-      text: message,
-    });
-  }
-};
-
-
-
+  };
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-10 ">
+    <div className="px-4 sm:px-6 md:px-8 py-10">
       <h2 className="text-3xl font-semibold mb-12 text-center text-gray-800">
         {isEditing ? 'Edit Your Biodata' : 'Create Your Biodata'}
       </h2>
@@ -159,7 +156,7 @@ const onSubmit = async (data) => {
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              className="w-full rounded border border-gray-300  cursor-pointer hover:border-rose-500 transition"
+              className="w-full rounded border border-gray-300 cursor-pointer hover:border-rose-500 transition"
             />
             {uploading && <p className="text-blue-500 text-xs mt-1">Uploading...</p>}
             <input type="hidden" {...register('profileImage', { required: true })} />
@@ -404,7 +401,7 @@ const onSubmit = async (data) => {
           )}
         </div>
 
-        {/* Contact Email - readonly */}
+        {/* Contact Email - Readonly */}
         <div className="md:col-span-2">
           <label className="block mb-2 font-medium text-gray-700">Contact Email</label>
           <input

@@ -1,5 +1,6 @@
 
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -10,10 +11,17 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted:", form);
-    alert("Thanks for contacting us!");
+      Swal.fire({
+      icon: "success",
+      title: "Message Sent!",
+      text: "Thank you for contacting us. We'll get back to you soon.",
+      confirmButtonColor: "#d63384", // pink
+    });
+
+    // Reset form
     setForm({ name: "", email: "", message: "" });
   };
+
 
   return (
     <section className=" py-32 px-4 min-h-[70vh]" id="contact">

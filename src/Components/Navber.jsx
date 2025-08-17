@@ -60,11 +60,11 @@ const Navbar = () => {
           {/* Tooltip */}
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-3 py-1 bg-[#db5aa6] text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap text-center">
             <div>{biodata?.name || user?.displayName}</div>
-            <div className="text-xs text-gray-300">{
-              authUser?.role === "admin"
-                ? "admin"
-                : (biodata?.bioId || user?.email)
-            }</div>
+            <div className="text-xs text-gray-300">{authUser?.role === "admin" ? (
+              "admin"
+            ) : (
+              <span>ID NO : {biodata?.bioId || "N/A" }</span>
+            )}</div>
           </div>
         </div>
       ) : (
@@ -100,7 +100,7 @@ const Navbar = () => {
           <div className="md:hidden">
             <button
               onClick={toggleDrawer}
-              className="text-gray-700   text-2xl focus:outline-none"
+              className="text-gray-700 mr-2  text-2xl focus:outline-none"
             >
               <FaBars />
             </button>
@@ -133,11 +133,11 @@ const Navbar = () => {
                   <div className="flex flex-col gap-1 primary-color">
                     <h1 className="text-[12px] overflow-hidden">{biodata?.name || user?.displayName}</h1>
                     <h1 className="text-[12px] overflow-hidden uppercase">
-                      {
-                        authUser?.role === "admin"
-                          ? "admin"
-                          : (biodata?.bioId || user?.email)
-                      }
+                      {authUser?.role === "admin" ? (
+                        "admin"
+                      ) : (
+                        <span>ID NO : {biodata?.bioId || "N/A"}</span>
+                      )}
                     </h1>
                   </div>
                 </div>
@@ -147,8 +147,8 @@ const Navbar = () => {
                 <h1 className="subtitle-font">Menu</h1>
             }
           </span>
-          <button onClick={toggleDrawer} className="text-gray-700  text-xl">
-            <FaTimes color="#EC003F" />
+          <button onClick={toggleDrawer} className="text-gray-700  text-xl ">
+            <FaTimes color="#EC003F" className="mr-2" />
           </button>
         </div>
         <div className="flex flex-col p-4 text-gray-700 subtitle-font font-bold ">

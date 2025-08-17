@@ -37,7 +37,9 @@ const ApprovedContactRequest = () => {
         const res = await axiosInstance.patch(`/approve-contact/${id}`);
         if (res.data.modifiedCount > 0) {
           toast.success("Contact approved successfully!");
-          refetch();
+
+         await refetch();
+
         } else {
           toast.error("Approval failed!");
         }
@@ -68,17 +70,19 @@ const ApprovedContactRequest = () => {
                 <tr className="text-center">
                   <th className="px-2 py-3  text-sm font-semibold ">Name</th>
                   <th className="px-2 py-3 text-sm font-semibold">Email</th>
+                  <th className="px-2 py-3  text-sm font-semibold">Request ID</th>
                   <th className="px-2 py-3  text-sm font-semibold">Biodata ID</th>
                   <th className="px-2 py-3  text-sm font-semibold">Status</th>
                   <th className="px-2 py-3  text-sm font-semibold">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y text-center divide-gray-200">
-                {requests.map(({ _id, requestName, requestEmail, requestBioId, status }) => (
+                {requests.map(({ _id, requestName, biodataId, requestEmail, requestBioId, status }) => (
                   <tr key={_id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-2 py-3 text-sm">{requestName}</td>
                     <td className="px-2 py-3 text-sm break-all">{requestEmail}</td>
                     <td className="px-2 py-3 text-sm">{requestBioId}</td>
+                    <td className="px-2 py-3 text-sm">{biodataId}</td>
                     <td className="px-2 py-3 text-sm">
                       {status === "approved" ? (
                         <span className="text-green-600 font-medium">Approved</span>
@@ -111,11 +115,12 @@ const ApprovedContactRequest = () => {
 
           {/* Card layout for small devices */}
           <div className="md:hidden space-y-4">
-            {requests.map(({ _id, requestName, requestEmail, requestBioId, status }) => (
+            {requests.map(({ _id, requestName, biodataId, requestEmail, requestBioId, status }) => (
               <div key={_id} className="bg-white shadow rounded-lg p-4">
                 <p className="text-sm"><span className="font-semibold">Name:</span> {requestName}</p>
                 <p className="text-sm"><span className="font-semibold">Email:</span> {requestEmail}</p>
-                <p className="text-sm"><span className="font-semibold">Biodata ID:</span> {requestBioId}</p>
+                <p className="text-sm"><span className="font-semibold">Request ID:</span> {requestBioId}</p>
+                <p className="text-sm"><span className="font-semibold">Biodata ID:</span> {biodataId}</p>
                 <p className="text-sm mb-2">
                   <span className="font-semibold">Status:</span>{" "}
                   {status === "approved" ? (
