@@ -8,7 +8,7 @@ const TopBar = () => {
         <div className="flex items-center gap-6">
           <span className="flex items-center gap-1">
             <span className="text-lg">📞</span>
-            <span>+01 5312 5312</span>
+            <span>+01 7312 5312</span>
           </span>
           <span className="flex items-center gap-1">
             <span className="text-lg">✉️</span>
