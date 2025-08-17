@@ -4,9 +4,9 @@ import { getAuth } from "firebase/auth";
 const axiosInstance = axios.create({
   baseURL: "http://localhost:3000", 
   withCredentials: true,
-});
+}); 
 
-// ✅ Request Interceptor: Add Firebase Token vvvvvvvvvvvvvvvvv
+// ✅ Request Interceptor: Add Firebase Token
 axiosInstance.interceptors.request.use(
   async (config) => {
     try {
@@ -14,7 +14,7 @@ axiosInstance.interceptors.request.use(
       const user = auth.currentUser;
 
       if (user) {
-        const token = await user.getIdToken(); // wait for token
+        const token = await user.getIdToken(); 
         config.headers.Authorization = `Bearer ${token}`;
       }
 
